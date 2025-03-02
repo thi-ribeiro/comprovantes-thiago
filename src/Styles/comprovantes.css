@@ -1,0 +1,394 @@
+* {
+  box-sizing: border-box;
+  font-size: small;
+  outline: none;
+}
+
+body {
+  padding: 0;
+  color: rgb(102, 102, 102);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 400px;
+  margin: 0 auto;
+}
+body a {
+  color: #000;
+  text-decoration: none;
+  display: flex;
+}
+
+.menu {
+  padding: 5px;
+  margin: 0 0 10px 0;
+  list-style: none;
+  text-transform: uppercase;
+  background-color: rgba(102, 102, 102, 0.18);
+  border: 1px solid rgb(194, 194, 194);
+  border-top: none;
+  width: 100%;
+}
+.menu a {
+  text-decoration: none;
+  font-size: large;
+  color: #fff;
+  font-weight: bold;
+}
+.menu ul {
+  margin: 0;
+  padding: 5px;
+}
+.menu ul li {
+  padding: 0 5px;
+  display: inline-block;
+}
+.menu ul .liSelected {
+  color: rgb(255, 128, 0);
+}
+
+.messages {
+  padding: 5px;
+}
+
+.comprovantes {
+  width: 98%;
+}
+.comprovantes .comprovantes-principal {
+  border: 1px solid rgb(194, 194, 194);
+  background-color: rgba(102, 102, 102, 0.06);
+  margin: 3px 0;
+}
+.comprovantes .comprovantes-principal .comprovantes-loading {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  background-color: #fff;
+  font-weight: bold;
+}
+.comprovantes .comprovantes-principal .comprovantes-header {
+  display: flex;
+  flex-direction: row;
+  padding: 2px 0;
+  align-items: center;
+  border-bottom: 1px solid rgb(194, 194, 194);
+  height: 28px;
+}
+.comprovantes .comprovantes-principal .comprovantes-header .funcoes-header {
+  padding: 5px;
+  display: flex;
+  align-items: center;
+}
+.comprovantes .comprovantes-principal .comprovantes-header .funcoes-header div {
+  margin: 5px;
+}
+.comprovantes .comprovantes-principal .comprovantes-header .funcoes-header .funcoes-header-total {
+  display: flex;
+  font-weight: bold;
+}
+.comprovantes .comprovantes-principal .comprovantes-header .funcoes-header .funcoes-header-usuarios {
+  display: flex;
+}
+.comprovantes .comprovantes-principal .comprovantes-header .funcoes-header .funcoes-header-usuarios .hiddenEye {
+  opacity: 0.3;
+}
+.comprovantes .comprovantes-principal .comprovantes-header .header-mes {
+  font-weight: bold;
+  font-size: medium;
+  margin: 0;
+  padding: 5px;
+  flex-grow: 1;
+}
+.comprovantes .comprovantes-principal .comprovantes-header .buttons-header {
+  display: flex;
+  padding: 5px;
+}
+.comprovantes .comprovantes-principal .comprovantes-vazio {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  font-weight: bold;
+  min-height: 28px;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo {
+  background-color: #fff;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes {
+  display: flex;
+  flex-direction: column;
+  padding: 0 3px;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-dia-header {
+  position: relative;
+  padding: 5px 0;
+  font-weight: bolder;
+  color: rgb(255, 128, 0);
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-dia-usuario {
+  font-weight: bold;
+  text-transform: capitalize;
+  width: 50px;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-total-dia {
+  display: flex;
+  justify-content: flex-end;
+  font-weight: bold;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-dia {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid rgb(194, 194, 194);
+  border-left: 0;
+  border-right: 0;
+  margin: 1px 0;
+  padding: 2px;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-dia .comprovantes-dia-botoes {
+  display: flex;
+  align-items: center;
+  padding: 0 5px 0 0;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-dia .comprovantes-dia-motivo {
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-dia .comprovantes-dia-motivo span::first-letter {
+  text-transform: capitalize;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes {
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes .comprovantes-mes-total-gasto-cartao {
+  display: flex;
+  justify-content: space-around;
+  margin: 5px 0;
+  padding: 5px;
+  border: 1px solid rgb(194, 194, 194);
+  border-left: 0;
+  border-right: 0;
+  text-align: center;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes .comprovantes-mes-total-gasto-cartao span {
+  font-weight: bold;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes .comprovantes-mes-total {
+  font-weight: bold;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes .comprovantes-mes-total-mes-valor {
+  color: rgb(255, 128, 0);
+}
+
+/* HTML: <div class="loader"></div> */
+.loader {
+  display: flex;
+  align-items: center;
+  width: 20px;
+  height: 0;
+  aspect-ratio: 1;
+  position: relative;
+}
+
+.loader::before,
+.loader::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgb(194, 194, 194);
+  width: 5px;
+  height: 5px;
+}
+
+.loader::before {
+  box-shadow: -10px 0;
+  animation: l8-1 1s infinite linear;
+  color: rgb(255, 128, 0);
+}
+
+.loader::after {
+  transform: rotate(0deg) translateX(10px);
+  animation: l8-2 1s infinite linear;
+}
+
+@keyframes l8-1 {
+  100% {
+    transform: translateX(10px);
+  }
+}
+@keyframes l8-2 {
+  100% {
+    transform: rotate(-180deg) translateX(10px);
+  }
+}
+.span-color {
+  color: rgb(255, 128, 0);
+}
+
+.select-comprovantes {
+  display: flex;
+  flex-direction: column;
+  width: 98%;
+  position: relative;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0 0 5px 0;
+}
+.select-comprovantes .select-headers {
+  display: flex;
+  flex-direction: row;
+  padding: 2px 0;
+  border: 1px solid rgb(194, 194, 194);
+  align-items: center;
+  height: 28px;
+}
+.select-comprovantes .select-headers .select-list {
+  flex-grow: 1;
+  padding: 5px;
+}
+.select-comprovantes .select-headers .select-list .select-list-item {
+  display: flex;
+  align-items: center;
+}
+.select-comprovantes .select-headers .select-header-arrow {
+  display: flex;
+  padding: 5px;
+}
+.select-comprovantes .select-options {
+  display: flex;
+  position: absolute;
+  flex-direction: column;
+  border: 1px solid rgb(194, 194, 194);
+  margin: 5px 0;
+  width: 100%;
+  background-color: #fff;
+  top: 28px;
+  box-shadow: 2px 2px 1px rgb(194, 194, 194);
+  z-index: 99;
+}
+.select-comprovantes .select-options .option {
+  padding: 5px;
+  cursor: default;
+}
+.select-comprovantes .select-options .option:hover {
+  background-color: rgba(102, 102, 102, 0.06);
+  color: white;
+}
+
+.header-divisor {
+  background-color: rgb(194, 194, 194);
+  width: 1px;
+  height: 18px;
+}
+
+.login {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgb(194, 194, 194);
+  padding: 10px;
+  background-color: rgba(102, 102, 102, 0.06);
+}
+.login h1 {
+  font-size: large;
+  margin: 0;
+  padding: 0 0 5px 0;
+}
+.login form {
+  display: flex;
+  flex-direction: column;
+}
+.login form input {
+  border: 1px solid rgb(194, 194, 194);
+  padding: 5px;
+  margin: 5px;
+}
+.login form input[type=submit] {
+  text-transform: capitalize;
+}
+
+.modal {
+  width: 95%;
+  max-width: 500px;
+  border: 1px solid rgb(194, 194, 194);
+  z-index: 999;
+  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.1);
+}
+.modal h1 {
+  font-size: large;
+  color: rgb(255, 128, 0);
+}
+.modal .modal-close {
+  display: flex;
+  justify-content: flex-end;
+}
+.modal label {
+  font-weight: bold;
+  padding: 5px 0;
+}
+.modal .modal-content {
+  display: flex;
+  flex-direction: column;
+}
+.modal .modal-content .modal-data-time-cartao {
+  display: flex;
+  justify-content: space-between;
+}
+.modal .modal-content .modal-data-time-cartao .modal-date-time {
+  display: flex;
+}
+.modal .modal-content .modal-data-time-cartao .modal-date-time div {
+  display: flex;
+  flex-direction: column;
+  padding: 0 5px 0 0;
+}
+.modal .modal-content .modal-data-time-cartao .modal-date-time div input {
+  width: 110px;
+}
+.modal .modal-content .modal-data-time-cartao .modal-cartao {
+  display: flex;
+  flex-direction: column;
+}
+.modal .modal-content .modal-data-time-cartao .modal-cartao select {
+  height: 32px;
+  border: 1px solid rgb(194, 194, 194);
+}
+.modal .modal-content .modal-functions {
+  display: flex;
+  justify-content: flex-end;
+}
+.modal .modal-content .modal-functions .modal-funcions-load {
+  display: flex;
+  align-items: center;
+}
+
+.modal-button {
+  display: flex;
+  position: fixed;
+  margin: 0;
+  bottom: 15px;
+  opacity: 0.3;
+  border: 1px solid rgb(194, 194, 194);
+  background-color: rgba(102, 102, 102, 0.06);
+  transition: all 250ms ease-in-out 0s;
+}
+
+.modal-button:hover {
+  opacity: 1;
+  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.1);
+}
+
+input {
+  height: 32px;
+  border: 1px solid rgb(194, 194, 194);
+}
+
+input[type=button] {
+  margin: 0 5px 0;
+}
+
+input[type=file] {
+  border: none;
+}/*# sourceMappingURL=comprovantes.css.map */
