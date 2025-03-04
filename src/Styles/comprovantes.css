@@ -149,6 +149,9 @@ body a {
   align-items: center;
   padding: 0 5px 0 0;
 }
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-dia .comprovantes-dia-botoes a {
+  color: rgb(194, 194, 194);
+}
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-dia .comprovantes-dia-motivo {
   display: flex;
   justify-content: center;
@@ -156,6 +159,9 @@ body a {
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-dia .comprovantes-dia-motivo span::first-letter {
   text-transform: capitalize;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-dia .comprovantes-dia-valor {
+  font-weight: bold;
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes {
   display: flex;
@@ -391,4 +397,31 @@ input[type=button] {
 
 input[type=file] {
   border: none;
+}
+
+.dias-layout-impressao .dias-layout-impressao-ano-mes {
+  font-weight: bold;
+  font-size: large;
+  margin: 5px 0;
+  color: rgb(255, 128, 0);
+}
+.dias-layout-impressao .dias-layout-impressao-dia {
+  font-weight: bold;
+  margin: 5px;
+  font-size: medium;
+}
+.dias-layout-impressao table {
+  width: 100%;
+  border: 1px solid rgb(194, 194, 194);
+}
+.dias-layout-impressao tr {
+  text-align: center;
+}
+.dias-layout-impressao td {
+  min-width: 180px;
+  border: 1px solid rgb(194, 194, 194);
+}
+.dias-layout-impressao .tg-01,
+.dias-layout-impressao .tg-02 {
+  min-width: 80px;
 }/*# sourceMappingURL=comprovantes.css.map */

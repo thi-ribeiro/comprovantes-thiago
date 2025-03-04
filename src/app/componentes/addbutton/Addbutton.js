@@ -2,7 +2,6 @@
 import { Gfetch } from '@/app/Fetch/FetchGlobal';
 import { mdiClose, mdiPlus } from '@mdi/js';
 import Icon from '@mdi/react';
-import { isInteger } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 
 export default function Addbutton({
@@ -26,20 +25,6 @@ export default function Addbutton({
 			dialog.close();
 		}
 	}, [isOpen, onClose, isDialogOpen, handleDadosForm, onEdit]);
-
-	const carregaComprovante = async (onEdit) => {
-		const response = await fetch(`${Gfetch}/data/comprovante`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ idComprovante: onEdit }),
-		});
-		const data = await response.json();
-
-		//sethandleDadosForm(data);
-		console.log(data);
-	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -65,9 +50,6 @@ export default function Addbutton({
 			closeDialog();
 			sethandleDadosForm({});
 			onEnd(formatMonth(date.getMonth() + 1));
-			//carregarComprovantes(new Date().getMonth() + 1);
-			//CallToast(data.message, 10);
-			//console.log(handleDadosForm);
 		}
 	};
 
@@ -82,7 +64,7 @@ export default function Addbutton({
 	const openDialog = (e) => {
 		setIsDialogOpen(true);
 
-		console.log(onEdit);
+		//console.log(onEdit);
 	};
 
 	const closeDialog = () => {
@@ -137,7 +119,7 @@ export default function Addbutton({
 								</select>
 							</div>
 						</div>
-						<label htmlFor='nome'>Nome:</label>
+						<label htmlFor='nome'>Responsável:</label>
 						<input
 							id='nome'
 							type='text'

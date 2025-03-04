@@ -203,11 +203,25 @@ function ComprovantesProvider({ children }) {
 		setidEditando({});
 	};
 
+	const converterParaReal = (valor) => {
+		if (valor) {
+			let valorConvertido = parseFloat(valor).toLocaleString('pt-BR', {
+				style: 'currency',
+				currency: 'BRL',
+			});
+
+			return valorConvertido;
+		} else {
+			return 'R$ 0,00';
+		}
+	};
+
 	return (
 		<ComprovantesContext.Provider
 			value={{
 				ano,
 				CarregarMes,
+				converterParaReal,
 				conteudo,
 				gastoCartoes,
 				definirAno,

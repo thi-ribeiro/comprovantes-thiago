@@ -24,6 +24,11 @@ export default function EditButton() {
 		}
 	}, [editando]);
 
+	const fileName = (nomeArquivo) => {
+		let lista = nomeArquivo?.split('/');
+		return nomeArquivo && lista.pop(); //POP PEGA O ULTIMO ITEM DO ARRAY!
+	};
+
 	return (
 		<>
 			<dialog className='modal' ref={DialogRef} onClose={closeDialog}>
@@ -63,7 +68,10 @@ export default function EditButton() {
 							</div>
 							<div className='modal-cartao'>
 								<label htmlFor='cartao'>Cartão:</label>
-								<select name='cartao' onChange={(e) => handleDados(e)}>
+								<select
+									name='cartao'
+									value={handleDadosForm.cartao || ''}
+									onChange={(e) => handleDados(e)}>
 									<option>Bradesco</option>
 									<option>Banestes</option>
 									<option>Caixa</option>
@@ -114,7 +122,7 @@ export default function EditButton() {
 						<input
 							type='hidden'
 							name='deletar'
-							defaultValue={handleDadosForm.arquivoOriginal?.split('/')[2]}
+							defaultValue={fileName(handleDadosForm.arquivoOriginal)}
 							onChange={(e) => handleDados(e)}
 						/>
 						<div className='modal-functions'>
