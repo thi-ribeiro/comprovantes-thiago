@@ -464,3 +464,37 @@ input[type="button"] {
 input[type="file"] {
     border: none;
 }
+
+.dias-layout-impressao {
+    .dias-layout-impressao-ano-mes {
+        font-weight: bold;
+        font-size: large;
+        margin: 5px 0;
+        color: $laranjaPadrao;
+    }
+
+    .dias-layout-impressao-dia {
+        font-weight: bold;
+        margin: 5px;
+        font-size: medium;
+    }
+
+    table {
+        width: 100%;
+        border: 1px solid $bordas;
+    }
+
+    tr {
+        text-align: center;
+    }
+
+    td {
+        min-width: 180px;
+        border: 1px solid $bordas;
+    }
+
+    .tg-01,
+    .tg-02 {
+        min-width: 80px;
+    }
+}

@@ -54,6 +54,7 @@ function Conteudo() {
 		MesAtivo,
 		editarPostComprovante,
 		ano,
+		converterParaReal,
 	} = useContext(ComprovantesContext);
 
 	const eventSourcesRef = useRef({
@@ -124,12 +125,13 @@ function Conteudo() {
 		const usuariosDoMes = userVis[mes]?.map((i) => i.username).join(', ');
 		const valorTotalMes = totalMensal
 			?.filter((i) => i.mes === mes)
-			.map((i) => i.totalMes.toFixed(2).replace('.', ','))[0];
+			//.map((i) => i.totalMes.toFixed(2).replace('.', ','))[0];
+			.map((i) => converterParaReal(i.totalMes))[0];
 		return (
 			<>
 				{valorTotalMes && (
 					<div className='funcoes-header-total'>
-						R$ &nbsp;
+						{/* R$ &nbsp; */}
 						<span className='span-color'>{valorTotalMes}</span>
 					</div>
 				)}
@@ -153,38 +155,28 @@ function Conteudo() {
 		}
 	};
 
-	const TotalCartoes = ({ mesTotal, arrayBancos, mesReferencia }) => {
+	const TotalMesCartoes = ({ mesTotal, arrayBancos, mesReferencia }) => {
 		if (mesTotal > 0 || arrayBancos.hasOwnProperty(mesReferencia)) {
 			return (
 				<div className='comprovantes-mes-total-mes'>
 					<div className='comprovantes-mes-total-gasto-cartao'>
 						<div className='comprovante-mes-total-cartao-bradesco'>
 							<span>Bradesco</span>
-							<br /> R${' '}
-							{gastoCartoes[mesReferencia]['Bradesco']
-								?.toFixed(2)
-								?.replace('.', ',') || 0}
+							<br />
+							{converterParaReal(gastoCartoes[mesReferencia]['Bradesco'])}
 						</div>
 						<div className='comprovante-mes-total-cartao-banestes'>
 							<span>Banestes</span> <br />
-							R${' '}
-							{gastoCartoes[mesReferencia]['Banestes']
-								?.toFixed(2)
-								?.replace('.', ',') || 0}
+							{converterParaReal(gastoCartoes[mesReferencia]['Banestes'])}
 						</div>
 						<div className='comprovante-mes-total-cartao-caixa'>
 							<span>Caixa</span> <br />
-							R${' '}
-							{gastoCartoes[mesReferencia]['Caixa']
-								?.toFixed(2)
-								?.replace('.', ',') || 0}
+							{converterParaReal(gastoCartoes[mesReferencia]['Caixa'])}
 						</div>
 					</div>
 					<div className='comprovantes-mes-total'>
-						Total R$ &nbsp;
-						<span className='span-color'>
-							{mesTotal.toFixed(2).replace('.', ',')}
-						</span>
+						Total &nbsp;
+						<span className='span-color'>{converterParaReal(mesTotal)}</span>
 					</div>
 				</div>
 			);
@@ -255,22 +247,21 @@ function Conteudo() {
 													</div>
 
 													<div className='comprovantes-dia-valor'>
-														R$ {valorComprovante.replace('.', ',')}
+														{converterParaReal(valorComprovante)}
 													</div>
 												</div>
 											);
 										})}
 
 										<div className='comprovantes-mes-total-dia'>
-											R$ &nbsp;
 											<span className='span-color'>
-												{valorTotalDia.toFixed(2).replace('.', ',')}
+												{converterParaReal(valorTotalDia)}
 											</span>
 										</div>
 									</div>
 								);
 							})}
-						<TotalCartoes
+						<TotalMesCartoes
 							mesTotal={valorFinalMes}
 							mesReferencia={MesNumerico}
 							arrayBancos={gastoCartoes}
