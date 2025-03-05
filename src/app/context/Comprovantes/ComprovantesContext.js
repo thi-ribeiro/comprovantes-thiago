@@ -43,14 +43,13 @@ function ComprovantesProvider({ children }) {
 			}),
 		};
 
-		const promises = [
-			fetch(`${Gfetch}/data/comprovantes/especifico`, optionsFetch),
-			fetch(`${Gfetch}/setUso`, optionsFetch),
-		];
+		const response = await fetch(
+			`${Gfetch}/data/comprovantes/especifico`,
+			optionsFetch
+		);
+		//TRATATIVA PARA ATIVAR OU DESATIVAR O MES ESPECIFICO
 
-		const responses = await Promise.all(promises);
-		//trata as duas promises, se uma rejeitada para o processamento
-		const respostaComprovantes = await responses[0].json();
+		const respostaComprovantes = await response.json();
 
 		if (respostaComprovantes.tokenStatus === false) {
 			window.location.href = '/login';
@@ -175,6 +174,8 @@ function ComprovantesProvider({ children }) {
 	const handleSubmitEdit = async (e) => {
 		e.preventDefault();
 
+		const mes = parseInt(handleDadosForm.data.split('-')[1]);
+
 		setLoading(true);
 
 		const formData = new FormData(e.currentTarget);
@@ -192,7 +193,7 @@ function ComprovantesProvider({ children }) {
 
 		if (response.ok) {
 			closeDialog();
-			CarregarMes(formatMonth(date.getMonth() + 1));
+			CarregarMes(formatMonth(mes));
 			setLoading(false);
 		}
 	};
