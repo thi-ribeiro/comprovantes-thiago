@@ -4,17 +4,17 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
 import Icon from '@mdi/react';
 import {
-	mdiEyeOffOutline,
-	mdiEyeOutline,
-	mdiLink,
+	mdiCalendarBadge,
+	mdiCalendarBadgeOutline,
+	mdiCalendarFilter,
+	mdiCalendarFilterOutline,
+	mdiCurrentDc,
 	mdiLinkVariant,
 } from '@mdi/js';
 import { Gfetch } from './Fetch/FetchGlobal';
 import SelectThiago from './componentes/select/SelectThiago';
 import Addbutton from './componentes/addbutton/Addbutton';
 import EditButton from './componentes/editButton/EditButton';
-
-import { LoginContext } from './context/login/LoginContext';
 import ComprovantesProvider, {
 	ComprovantesContext,
 } from './context/Comprovantes/ComprovantesContext';
@@ -44,112 +44,40 @@ function Conteudo() {
 			12: 'Dezembro',
 		}).sort()
 	);
-	const [loadingHeaders, setLoadingHeaders] = useState(true); //A IDEIA ERA COMEÇAR JÁ RODANDO LOADING
-	const [userVis, setUservis] = useState({});
-	const [totalMensal, settotalMensal] = useState([]);
 
-	const { checkTokenNoFetch } = useContext(LoginContext);
 	const {
 		CarregarMes,
 		conteudo,
 		gastoCartoes,
 		definirAno,
-		IconButton,
+		BotaoOpen,
 		loading,
 		MesAtivo,
 		editarPostComprovante,
 		ano,
 		converterParaReal,
+		Busca,
+		totalMensal,
+		loadingHeaders,
 	} = useContext(ComprovantesContext);
-
-	const eventSourcesRef = useRef({
-		eventVisualizacao: null,
-		eventSomatoriaMes: null,
-	});
-
-	useEffect(() => {
-		checkTokenNoFetch();
-
-		const currentEventSources = eventSourcesRef.current;
-
-		if (currentEventSources) {
-			currentEventSources.eventVisualizacao?.close();
-			currentEventSources.eventSomatoriaMes?.close();
-		}
-
-		const eventVisualizacao = new EventSource(`${Gfetch}/stream/eyeactive`);
-		eventVisualizacao.onmessage = (event) => {
-			const dadosObj = JSON.parse(event.data);
-			const atualizar = dadosObj
-				.filter((item) => {
-					return item.lastviewcomprovante.split('-')[0] === ano.toString();
-				})
-				.map((item) => {
-					return {
-						...item,
-						lastviewcomprovante: item.lastviewcomprovante.split('-')[1],
-					};
-				});
-			let agrupar = _.groupBy(atualizar, 'lastviewcomprovante');
-
-			setLoadingHeaders(false); //FINALIZAR O LOADING
-			setUservis(agrupar);
-		};
-
-		const eventSomatoriaMes = new EventSource(`${Gfetch}/somaMeses`);
-		eventSomatoriaMes.onmessage = (event) => {
-			const dados = JSON.parse(event.data);
-			const dadosAno = dados.filter((item) => {
-				return item.ano.split('-')[0] === ano.toString();
-			});
-
-			setLoadingHeaders(false);
-			settotalMensal(dadosAno);
-		};
-
-		eventVisualizacao.onerror = (error) => {
-			console.error('Erro no EventSource:', error);
-			eventVisualizacao.close(); // Feche a conexão em caso de erro
-		};
-
-		eventSourcesRef.current = { eventVisualizacao, eventSomatoriaMes };
-
-		return () => {
-			eventVisualizacao.close();
-			eventSomatoriaMes.close();
-		};
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ano]);
 
 	const HeaderFunctions = ({ mes }) => {
 		if (loadingHeaders) {
 			return <div className='funcoes-header-loading loader'></div>;
 		}
 
-		const usuariosDoMes = userVis[mes]?.map((i) => i.username).join(', ');
-		const valorTotalMes = totalMensal
-			?.filter((i) => i.mes === mes)
-			//.map((i) => i.totalMes.toFixed(2).replace('.', ','))[0];
-			.map((i) => converterParaReal(i.totalMes))[0];
-		return (
-			<>
-				{valorTotalMes && (
-					<div className='funcoes-header-total'>
-						{/* R$ &nbsp; */}
-						<span className='span-color'>{valorTotalMes}</span>
-					</div>
-				)}
+		let totalMes = totalMensal[ano];
 
-				<div className='funcoes-header-usuarios' alt={usuariosDoMes}>
-					{!usuariosDoMes ? (
-						<Icon className='hiddenEye' path={mdiEyeOffOutline} size={1} />
-					) : (
-						<Icon path={mdiEyeOutline} size={1} />
-					)}
+		if (totalMes.hasOwnProperty(mes)) {
+			return (
+				<div className='funcoes-header-total'>
+					R$
+					<span className='span-color'>
+						{converterParaReal(totalMensal[ano][mes], false)}
+					</span>
 				</div>
-			</>
-		);
+			);
+		}
 	};
 
 	const Reduzir = (nome, limite) => {
@@ -179,9 +107,25 @@ function Conteudo() {
 							{converterParaReal(gastoCartoes[mesReferencia]['Caixa'])}
 						</div>
 					</div>
-					<div className='comprovantes-mes-total'>
-						Total &nbsp;
-						<span className='span-color'>{converterParaReal(mesTotal)}</span>
+					<div className='comprovantes-mes-total-dados'>
+						<div className='comprovantes-mes-total-completo'>
+							<div>
+								<Icon path={mdiCalendarBadgeOutline} size={1} />
+							</div>
+							<span className='span-color'>R$ </span>
+							<div>
+								{converterParaReal(totalMensal[ano][mesReferencia], false)}
+							</div>
+						</div>
+						{totalMensal[ano][mesReferencia] !== mesTotal && (
+							<div className='comprovantes-mes-total-filtrado'>
+								<div>
+									<Icon path={mdiCalendarFilterOutline} size={1} />
+								</div>
+								<span className='span-color'>R$ </span>
+								<div>{converterParaReal(mesTotal, false)}</div>
+							</div>
+						)}
 					</div>
 				</div>
 			);
@@ -197,75 +141,88 @@ function Conteudo() {
 			);
 		}
 
-		let conteudoAnoMes = conteudo[ano]?.[MesNumerico];
+		let conteudoAnoMes = conteudo?.[ano]?.[MesNumerico] || {};
 
-		if (conteudoAnoMes && conteudoAnoMes?.active) {
+		if (Object?.keys(conteudoAnoMes)?.length) {
 			let conteudoDia = conteudoAnoMes?.dias;
 			let valorFinalMes = 0;
+
 			if (conteudoDia) {
 				return (
 					<div className='comprovantes-grupo'>
-						{Object.keys(conteudoDia)
-							.sort()
-							.map((dia, ind) => {
-								let valorTotalDia = 0;
-								return (
-									<div key={ind} className='comprovantes-mes'>
-										<div className='comprovantes-mes-dia-header' key={ind}>
-											{dia}
+						<Busca ano={ano} mes={MesNumerico} />
+						{conteudoDia.hasOwnProperty('na') ? (
+							<div className='comprovantes-grupo-vazio'>
+								{conteudoDia?.['na'].message}
+							</div>
+						) : (
+							Object.keys(conteudoDia)
+								?.sort()
+								?.map((dia, ind) => {
+									let valorTotalDia = 0;
+									return (
+										<div key={ind} className='comprovantes-mes'>
+											<div className='comprovantes-mes-dia-header' key={ind}>
+												{dia}
+											</div>
+											<div className='comprovantes-mes-dia-wrapper'>
+												{Object?.values(conteudoDia?.[dia]).map(
+													(ConteudoDia) => {
+														let {
+															idComprovante,
+															motivoComprovante,
+															usuarioComprovante,
+															linkComprovante,
+															valorComprovante,
+														} = ConteudoDia;
+
+														valorTotalDia =
+															parseFloat(valorTotalDia) +
+															parseFloat(valorComprovante || 0);
+														valorFinalMes =
+															parseFloat(valorFinalMes) +
+															parseFloat(valorComprovante);
+														return (
+															<div
+																key={idComprovante}
+																className='comprovantes-dia'>
+																<div className='comprovantes-dia-botoes'>
+																	<a
+																		href={`${Gfetch}/${linkComprovante}`}
+																		alt={usuarioComprovante}
+																		target='_blank'
+																		rel='noopener noreferrer'>
+																		<Icon path={mdiLinkVariant} size={1} />
+																	</a>
+																</div>
+																<div className='comprovantes-dia-usuario'>
+																	{usuarioComprovante}
+																</div>
+																<div
+																	className='comprovantes-dia-motivo'
+																	onClick={() =>
+																		editarPostComprovante(idComprovante)
+																	}>
+																	<span>{motivoComprovante}</span>
+																</div>
+
+																<div className='comprovantes-dia-valor'>
+																	{converterParaReal(valorComprovante)}
+																</div>
+															</div>
+														);
+													}
+												)}
+											</div>
+											<div className='comprovantes-mes-total-dia'>
+												<span className='span-color'>
+													{converterParaReal(valorTotalDia)}
+												</span>
+											</div>
 										</div>
-										{conteudoDia[dia].map((ConteudoDia) => {
-											let {
-												idComprovante,
-												motivoComprovante,
-												usuarioComprovante,
-												linkComprovante,
-												valorComprovante,
-											} = ConteudoDia;
-
-											valorTotalDia =
-												parseFloat(valorTotalDia) +
-												parseFloat(valorComprovante || 0);
-											valorFinalMes =
-												parseFloat(valorFinalMes) +
-												parseFloat(valorComprovante);
-											return (
-												<div key={idComprovante} className='comprovantes-dia'>
-													<div className='comprovantes-dia-botoes'>
-														<a
-															href={`${Gfetch}/${linkComprovante}`}
-															alt={usuarioComprovante}
-															target='_blank'
-															rel='noopener noreferrer'>
-															<Icon path={mdiLinkVariant} size={0.8} />
-														</a>
-													</div>
-													<div className='comprovantes-dia-usuario'>
-														{Reduzir(usuarioComprovante, 8)}
-													</div>
-													<div
-														className='comprovantes-dia-motivo'
-														onClick={() =>
-															editarPostComprovante(idComprovante)
-														}>
-														<span>{Reduzir(motivoComprovante, 25)}</span>
-													</div>
-
-													<div className='comprovantes-dia-valor'>
-														{converterParaReal(valorComprovante)}
-													</div>
-												</div>
-											);
-										})}
-
-										<div className='comprovantes-mes-total-dia'>
-											<span className='span-color'>
-												{converterParaReal(valorTotalDia)}
-											</span>
-										</div>
-									</div>
-								);
-							})}
+									);
+								})
+						)}
 						<TotalMesCartoes
 							mesTotal={valorFinalMes}
 							mesReferencia={MesNumerico}
@@ -297,10 +254,9 @@ function Conteudo() {
 								</div>
 								<div className='header-divisor'></div>
 								<div className='buttons-header'>
-									<IconButton mesPosicaoNoObjeto={NumMes} />
+									<BotaoOpen mesPosicaoNoObjeto={NumMes} />
 								</div>
 							</div>
-
 							<LayoutMes MesNumerico={NumMes} loading={loading} />
 						</div>
 					);

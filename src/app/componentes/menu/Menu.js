@@ -24,8 +24,6 @@ export default function Menu() {
 		},
 	];
 
-	//console.log(user);
-
 	return (
 		<nav className='menu'>
 			<ul>

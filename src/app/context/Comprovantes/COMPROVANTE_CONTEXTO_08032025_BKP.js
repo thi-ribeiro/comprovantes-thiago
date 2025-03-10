@@ -24,7 +24,7 @@ function ComprovantesProvider({ children }) {
 	const [handleDadosForm, sethandleDadosForm] = useState({});
 	const [editando, setEditando] = useState(null);
 	const [idEditando, setidEditando] = useState(null);
-	const [dadosFiltrados, setDadosFiltrados] = useState({});
+	const [dadosFiltrados, setDadosFiltrados] = useState(null);
 	const [totalMensal, settotalMensal] = useState([]);
 
 	const { user } = useContext(LoginContext);
@@ -34,15 +34,13 @@ function ComprovantesProvider({ children }) {
 
 		eventSomatoriaMes.onmessage = (event) => {
 			const dados = JSON.parse(event.data);
-			// const dadosAno = dados.filter((item) => {
-			// 	return item.ano.split('-')[0] === ano.toString();
-			// });
+			const dadosAno = dados.filter((item) => {
+				return item.ano.split('-')[0] === ano.toString();
+			});
 
-			console.log(dados);
-
-			if (!_.isEqual(dados, totalMensal)) {
+			if (!_.isEqual(dadosAno, totalMensal)) {
 				setLoadingHeaders(false);
-				settotalMensal(dados);
+				settotalMensal(dadosAno);
 			}
 		};
 
@@ -50,12 +48,12 @@ function ComprovantesProvider({ children }) {
 			eventSomatoriaMes.close();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ano]);
+	}, []);
 
 	const CarregarMes = async (mes) => {
 		//let user = localStorage.getItem('usuario');
 		setLoading(true);
-		//setDadosFiltrados(null); //APAGA A BUSCA ATUAL
+		setDadosFiltrados(null); //APAGA A BUSCA ATUAL
 
 		let token = localStorage?.getItem('token');
 		//setMesAtivo({ ...MesAtivo, [mes]: mes }); //SETA O MES ASSIM QUE CLICAR PARA CARREGAR
@@ -122,16 +120,17 @@ function ComprovantesProvider({ children }) {
 			groupedByDay = null;
 		}
 
-		const conteudoNovo = { ...conteudo };
-		conteudoNovo[ano] = {
-			...conteudoNovo[ano],
-			[mes]: {
-				...conteudoNovo[ano]?.[mes],
-				dias: groupedByDay,
+		setConteudo({
+			...conteudo,
+			[ano]: {
+				...conteudo[ano],
+				[mes]: {
+					...conteudo[ano]?.[mes],
+					dias: groupedByDay,
+					active: true,
+				},
 			},
-		};
-
-		setConteudo(conteudoNovo);
+		});
 
 		//PORQUE EU NAO CONSIGO DEIXAR ESTE COMO IDENTIFICADOR DE ATIVO DE LOAD
 		//ESTE PEGA E ACRESCENTA CADA DIV ABERTA NO MOMENTO
@@ -142,15 +141,25 @@ function ComprovantesProvider({ children }) {
 	};
 
 	const BotaoOpen = ({ mesPosicaoNoObjeto }) => {
-		if (conteudo?.[ano]?.hasOwnProperty(mesPosicaoNoObjeto)) {
+		//if (conteudo[ano]?.[mesPosicaoNoObjeto]?.active) {
+		if (conteudo[ano]?.[mesPosicaoNoObjeto]?.active) {
+			console.log(conteudo);
+			//console.log(mesPosicaoNoObjeto);
 			return (
 				<Icon
 					path={mdiUnfoldLessHorizontal}
 					size={1}
 					onClick={() => {
-						const novoEstadoConteudo = { ...conteudo };
-						delete conteudo?.[ano]?.[mesPosicaoNoObjeto];
-						setConteudo(novoEstadoConteudo);
+						const novoState = { ...conteudo };
+						//SOU OBRIGADO A FAZER UMA COPIA DE TUDO ANTES! SE N ELE ATUALIZA TUDO!
+						novoState[ano] = { ...novoState[ano] };
+						novoState[ano][mesPosicaoNoObjeto] = {
+							...novoState[ano][mesPosicaoNoObjeto],
+						};
+						novoState[ano][mesPosicaoNoObjeto].active = false;
+
+						setConteudo(novoState);
+						setDadosFiltrados(null); //FIX FILTRO
 					}}
 				/>
 			);
@@ -238,7 +247,7 @@ function ComprovantesProvider({ children }) {
 
 			return cifrao ? valorConvertido : valorConvertido.replace('R$', '');
 		} else {
-			return `${cifrao ? 'R$' : ''}0,00`;
+			return `${cifrao ? 'R$' : ''} 0,00`;
 		}
 	};
 
@@ -255,10 +264,9 @@ function ComprovantesProvider({ children }) {
 		let termo = formData.get('buscar');
 
 		if (!termo) {
-			CarregarMes(mes);
+			setDadosFiltrados(conteudo); // Restaura os dados originais se a busca estiver vazia
 		} else {
-			const dados = conteudo?.[ano]?.[mes]?.dias;
-
+			let dados = conteudo[ano][mes].dias;
 			let resultadosFiltrados = {};
 
 			for (const dia in dados) {
@@ -287,17 +295,19 @@ function ComprovantesProvider({ children }) {
 				};
 			}
 
-			setConteudo({
+			setDadosFiltrados({
 				...conteudo,
 				[ano]: {
 					...conteudo[ano],
 					[mes]: {
 						...conteudo[ano]?.[mes],
 						dias: resultadosFiltrados,
-						//active: true,
+						active: true,
 					},
 				},
 			});
+
+			//console.log(dadosFiltrados);
 		}
 	};
 
@@ -312,8 +322,14 @@ function ComprovantesProvider({ children }) {
 					<input
 						name='buscar'
 						type='text'
+						//ref={buscaRef}
 						autoComplete='off'
+						//autoFocus
+						//value={termoBusca[mes]}
 						placeholder='Filtrar motivo...'
+						//onChange={(e) =>
+						//	setTermoBusca({ ...termoBusca, [mes]: e.currentTarget.value })
+						//}
 					/>
 					<button type='submit'>
 						<Icon path={mdiTextSearchVariant} size={1} />

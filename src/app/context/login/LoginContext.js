@@ -2,13 +2,13 @@
 
 import { Gfetch } from '@/app/Fetch/FetchGlobal';
 import { jwtDecode } from 'jwt-decode';
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useMemo } from 'react';
 
 export const LoginContext = createContext(null);
 
 function LoginProvider({ children }) {
 	const [user, setUser] = useState({});
-	const [token, settoken] = useState({});
+	//const [token, settoken] = useState({});
 
 	useEffect(() => {
 		const storedUser = localStorage?.getItem('usuario');
@@ -74,16 +74,20 @@ function LoginProvider({ children }) {
 		}
 	};
 
+	const contextValue = useMemo(
+		() => ({
+			user,
+			setUser,
+			clearUserLocal,
+			setToken,
+			verificaToken,
+			checkTokenNoFetch,
+		}),
+		[user]
+	); // Adicione dependências relevantes
+
 	return (
-		<LoginContext.Provider
-			value={{
-				user,
-				setUser,
-				clearUserLocal,
-				setToken,
-				verificaToken,
-				checkTokenNoFetch,
-			}}>
+		<LoginContext.Provider value={contextValue}>
 			{children}
 		</LoginContext.Provider>
 	);

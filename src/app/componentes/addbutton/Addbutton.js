@@ -33,10 +33,6 @@ export default function Addbutton({
 
 		const formData = new FormData(e.currentTarget);
 
-		// formData.forEach((value, key) => {
-		// 	console.log(key + ': ' + value);
-		// });
-
 		const date = new Date(formData.get('data'));
 		const response = await fetch(`${Gfetch}/upload`, {
 			method: 'POST',

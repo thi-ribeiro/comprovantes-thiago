@@ -12,6 +12,8 @@ export default function EditButton() {
 		handleDadosForm,
 		handleDados,
 		handleSubmitEdit,
+		loading,
+		fileNamePop,
 	} = useContext(ComprovantesContext);
 
 	useEffect(() => {
@@ -23,11 +25,6 @@ export default function EditButton() {
 			dialog.close();
 		}
 	}, [editando]);
-
-	const fileName = (nomeArquivo) => {
-		let lista = nomeArquivo?.split('/');
-		return nomeArquivo && lista.pop(); //POP PEGA O ULTIMO ITEM DO ARRAY!
-	};
 
 	return (
 		<>
@@ -122,11 +119,11 @@ export default function EditButton() {
 						<input
 							type='hidden'
 							name='deletar'
-							defaultValue={fileName(handleDadosForm.arquivoOriginal)}
+							defaultValue={fileNamePop(handleDadosForm.arquivoOriginal)}
 							onChange={(e) => handleDados(e)}
 						/>
 						<div className='modal-functions'>
-							{false ? (
+							{loading ? (
 								<div className='modal-funcions-load'>
 									Enviando &nbsp;&nbsp;&nbsp;<div className='loader'></div>
 								</div>

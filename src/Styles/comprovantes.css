@@ -20,7 +20,7 @@ body a {
 }
 
 .menu {
-  padding: 5px;
+  padding: 5px 0;
   margin: 0 0 10px 0;
   list-style: none;
   text-transform: uppercase;
@@ -37,7 +37,7 @@ body a {
 }
 .menu ul {
   margin: 0;
-  padding: 5px;
+  padding: 0 5px;
 }
 .menu ul li {
   padding: 0 5px;
@@ -56,7 +56,7 @@ body a {
 }
 .comprovantes .comprovantes-principal {
   border: 1px solid rgb(194, 194, 194);
-  background-color: rgba(102, 102, 102, 0.06);
+  background-color: rgba(102, 102, 102, 0.059);
   margin: 3px 0;
 }
 .comprovantes .comprovantes-principal .comprovantes-loading {
@@ -68,8 +68,6 @@ body a {
 }
 .comprovantes .comprovantes-principal .comprovantes-header {
   display: flex;
-  flex-direction: row;
-  padding: 2px 0;
   align-items: center;
   border-bottom: 1px solid rgb(194, 194, 194);
   height: 28px;
@@ -112,6 +110,46 @@ body a {
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo {
   background-color: #fff;
+  position: relative;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-grupo-busca {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background: transparent;
+  margin: 0 2px;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-grupo-busca .comprovantes-grupo-busca-active {
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  height: 25px;
+  background: #fff;
+  width: 70%;
+  z-index: 99;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-grupo-busca .comprovantes-grupo-busca-active input[type=text] {
+  padding: 0 5px;
+  margin: 0;
+  width: 100%;
+  border: none;
+  background: transparent;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-grupo-busca .comprovantes-grupo-busca-active button {
+  display: flex;
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  color: rgb(255, 128, 0);
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-grupo-vazio {
+  padding: 5px;
+  font-weight: bold;
+  color: rgb(255, 128, 0);
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes {
   display: flex;
@@ -120,7 +158,7 @@ body a {
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-dia-header {
   position: relative;
-  padding: 5px 0;
+  padding: 5px;
   font-weight: bolder;
   color: rgb(255, 128, 0);
 }
@@ -132,47 +170,71 @@ body a {
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-total-dia {
   display: flex;
   justify-content: flex-end;
+  padding: 2px 5px;
   font-weight: bold;
 }
-.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-dia {
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-dia-wrapper {
+  border-top: 1px solid rgb(194, 194, 194);
+  border-bottom: 1px solid rgb(194, 194, 194);
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-dia-wrapper .comprovantes-dia {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid rgb(194, 194, 194);
   border-left: 0;
   border-right: 0;
   margin: 1px 0;
-  padding: 2px;
+  padding: 0 5px;
 }
-.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-dia .comprovantes-dia-botoes {
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-dia-wrapper .comprovantes-dia .comprovantes-dia-botoes {
   display: flex;
   align-items: center;
   padding: 0 5px 0 0;
 }
-.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-dia .comprovantes-dia-botoes a {
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-dia-wrapper .comprovantes-dia .comprovantes-dia-botoes a {
   color: rgb(194, 194, 194);
 }
-.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-dia .comprovantes-dia-motivo {
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-dia-wrapper .comprovantes-dia .comprovantes-dia-motivo {
   display: flex;
   justify-content: center;
   flex-grow: 1;
 }
-.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-dia .comprovantes-dia-motivo span::first-letter {
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-dia-wrapper .comprovantes-dia .comprovantes-dia-motivo span::first-letter {
   text-transform: capitalize;
 }
-.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-dia .comprovantes-dia-valor {
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-dia-wrapper .comprovantes-dia .comprovantes-dia-valor {
   font-weight: bold;
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes {
   display: flex;
   flex-direction: column;
   padding: 5px;
+  font-weight: bold;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes .comprovantes-mes-total-dados {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes .comprovantes-mes-total-dados .comprovantes-mes-total-completo,
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes .comprovantes-mes-total-dados .comprovantes-mes-total-filtrado {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes .comprovantes-mes-total-dados .comprovantes-mes-total-completo div,
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes .comprovantes-mes-total-dados .comprovantes-mes-total-filtrado div {
+  display: flex;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes .comprovantes-mes-total-dados .comprovantes-mes-total-completo div:nth-child(1),
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes .comprovantes-mes-total-dados .comprovantes-mes-total-filtrado div:nth-child(1) {
+  padding: 0 5px 0 0;
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes .comprovantes-mes-total-gasto-cartao {
   display: flex;
   justify-content: space-around;
-  margin: 5px 0;
-  padding: 5px;
+  margin: 5px 10px;
+  padding: 5px 0;
   border: 1px solid rgb(194, 194, 194);
   border-left: 0;
   border-right: 0;
@@ -280,7 +342,7 @@ body a {
   cursor: default;
 }
 .select-comprovantes .select-options .option:hover {
-  background-color: rgba(102, 102, 102, 0.06);
+  background-color: rgba(102, 102, 102, 0.059);
   color: white;
 }
 
@@ -295,7 +357,7 @@ body a {
   flex-direction: column;
   border: 1px solid rgb(194, 194, 194);
   padding: 10px;
-  background-color: rgba(102, 102, 102, 0.06);
+  background-color: rgba(102, 102, 102, 0.059);
 }
 .login h1 {
   font-size: large;
@@ -377,7 +439,7 @@ body a {
   bottom: 15px;
   opacity: 0.3;
   border: 1px solid rgb(194, 194, 194);
-  background-color: rgba(102, 102, 102, 0.06);
+  background-color: rgba(102, 102, 102, 0.059);
   transition: all 250ms ease-in-out 0s;
 }
 
@@ -399,29 +461,48 @@ input[type=file] {
   border: none;
 }
 
-.dias-layout-impressao .dias-layout-impressao-ano-mes {
+.relatorio .relatorio-busca {
+  display: flex;
+  margin: 5px 0;
+}
+.relatorio .relatorio-busca input[type=text] {
+  width: 100%;
+}
+.relatorio .dias-layout-impressao .dias-layout-impressao-ano-mes {
   font-weight: bold;
   font-size: large;
   margin: 5px 0;
   color: rgb(255, 128, 0);
 }
-.dias-layout-impressao .dias-layout-impressao-dia {
+.relatorio .dias-layout-impressao .dias-layout-impressao-dia {
   font-weight: bold;
   margin: 5px;
   font-size: medium;
 }
-.dias-layout-impressao table {
+.relatorio .dias-layout-impressao table {
   width: 100%;
   border: 1px solid rgb(194, 194, 194);
 }
-.dias-layout-impressao tr {
+.relatorio .dias-layout-impressao table .tr-dia {
+  border: none;
+}
+.relatorio .dias-layout-impressao table .tr-dia th {
+  text-align: left;
+  background-color: rgba(102, 102, 102, 0.059);
+}
+.relatorio .dias-layout-impressao th {
+  border: 1px solid rgb(194, 194, 194);
+  padding: 5px;
+}
+.relatorio .dias-layout-impressao tr {
   text-align: center;
 }
-.dias-layout-impressao td {
+.relatorio .dias-layout-impressao td {
   min-width: 180px;
   border: 1px solid rgb(194, 194, 194);
+  padding: 0 5px;
 }
-.dias-layout-impressao .tg-01,
-.dias-layout-impressao .tg-02 {
+.relatorio .dias-layout-impressao .tg-01,
+.relatorio .dias-layout-impressao .tg-02 {
   min-width: 80px;
 }/*# sourceMappingURL=comprovantes.css.map */
