@@ -67,15 +67,16 @@ export default function EditButton() {
 								<label htmlFor='cartao'>Cartão:</label>
 								<select
 									name='cartao'
-									value={handleDadosForm.cartao || ''}
-									onChange={(e) => handleDados(e)}>
+									value={handleDadosForm.cartao}
+									onChange={(e) => handleDados(e)}
+									required>
 									<option>Bradesco</option>
 									<option>Banestes</option>
 									<option>Caixa</option>
 								</select>
 							</div>
 						</div>
-						<label htmlFor='nome'>Nome:</label>
+						<label htmlFor='nome'>Responsável:</label>
 						<input
 							id='nome'
 							type='text'

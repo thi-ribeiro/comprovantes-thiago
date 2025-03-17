@@ -87,7 +87,7 @@ export default function Addbutton({
 										type='date'
 										name='data'
 										//placeholder='DD-MM-AAAA'
-										required
+
 										value={handleDadosForm.data || ''}
 										onChange={handleDados}
 									/>
@@ -100,7 +100,7 @@ export default function Addbutton({
 										name='time'
 										step='1'
 										//placeholder='HH:MM:SS'
-										required
+
 										value={handleDadosForm.time || ''}
 										onChange={(e) => handleDados(e)}
 									/>
@@ -121,7 +121,6 @@ export default function Addbutton({
 							type='text'
 							autoComplete='off'
 							name='nome'
-							required
 							value={handleDadosForm.nome || ''}
 							onChange={(e) => handleDados(e)}
 						/>
@@ -131,7 +130,6 @@ export default function Addbutton({
 							type='text'
 							autoComplete='off'
 							name='motivo'
-							required
 							value={handleDadosForm.motivo || ''}
 							onChange={(e) => handleDados(e)}
 						/>
@@ -143,7 +141,6 @@ export default function Addbutton({
 							autoComplete='off'
 							inputMode='decimal'
 							name='valor'
-							required
 							value={handleDadosForm.valor || ''}
 							onChange={(e) => handleDados(e)}
 						/>
@@ -153,7 +150,6 @@ export default function Addbutton({
 							type='file'
 							name='arquivo'
 							value={handleDadosForm.arquivo || ''}
-							required
 							onChange={(e) => handleDados(e)}
 						/>
 						<div className='modal-functions'>

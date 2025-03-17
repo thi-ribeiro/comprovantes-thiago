@@ -4,12 +4,8 @@ import { Gfetch } from '@/app/Fetch/FetchGlobal';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { LoginContext } from '../login/LoginContext';
 import _ from 'lodash';
-import Icon from '@mdi/react';
-import {
-	mdiTextSearchVariant,
-	mdiUnfoldLessHorizontal,
-	mdiUnfoldMoreHorizontal,
-} from '@mdi/js';
+
+import { BsChevronDown, BsChevronUp, BsDot, BsSearch } from 'react-icons/bs';
 
 export const ComprovantesContext = createContext();
 
@@ -26,6 +22,10 @@ function ComprovantesProvider({ children }) {
 	const [idEditando, setidEditando] = useState(null);
 	const [dadosFiltrados, setDadosFiltrados] = useState({});
 	const [totalMensal, settotalMensal] = useState([]);
+	const [aberto, setAberto] = useState(false);
+
+	const [buscaTermo, setbuscaTermo] = useState({});
+	const [backupConteudo, setbackupConteudo] = useState({});
 
 	const { user } = useContext(LoginContext);
 
@@ -34,11 +34,6 @@ function ComprovantesProvider({ children }) {
 
 		eventSomatoriaMes.onmessage = (event) => {
 			const dados = JSON.parse(event.data);
-			// const dadosAno = dados.filter((item) => {
-			// 	return item.ano.split('-')[0] === ano.toString();
-			// });
-
-			console.log(dados);
 
 			if (!_.isEqual(dados, totalMensal)) {
 				setLoadingHeaders(false);
@@ -53,12 +48,11 @@ function ComprovantesProvider({ children }) {
 	}, [ano]);
 
 	const CarregarMes = async (mes) => {
-		//let user = localStorage.getItem('usuario');
+		apagarBusca(mes);
 		setLoading(true);
-		//setDadosFiltrados(null); //APAGA A BUSCA ATUAL
 
 		let token = localStorage?.getItem('token');
-		//setMesAtivo({ ...MesAtivo, [mes]: mes }); //SETA O MES ASSIM QUE CLICAR PARA CARREGAR
+
 		setMesAtivo({ mes: mes }); //SETA O MES ASSIM QUE CLICAR PARA CARREGAR
 		//SEM ESTE MES ATIVO EU NAO CONSIGO PEGAR O MES QUE VAI RECEBER LOADING
 
@@ -131,43 +125,26 @@ function ComprovantesProvider({ children }) {
 			},
 		};
 
+		//console.log(conteudoNovo);
+
 		setConteudo(conteudoNovo);
 
-		//PORQUE EU NAO CONSIGO DEIXAR ESTE COMO IDENTIFICADOR DE ATIVO DE LOAD
-		//ESTE PEGA E ACRESCENTA CADA DIV ABERTA NO MOMENTO
-		//E DEPOIS DEIXA O STATUS DELA COMO ACTIVE TRUE OU FALSE
-		//COMO VAI PASSAR POR UM LOOP ELE VAI PASSAR POR TODOS TODA MUDANÇA DE ESTADO
-		//CAUSANDO UM LOADING PARA CADA ITEM DENTRO SERÁ?!
-		setLoading(false);
-	};
-
-	const BotaoOpen = ({ mesPosicaoNoObjeto }) => {
-		if (conteudo?.[ano]?.hasOwnProperty(mesPosicaoNoObjeto)) {
-			return (
-				<Icon
-					path={mdiUnfoldLessHorizontal}
-					size={1}
-					onClick={() => {
-						const novoEstadoConteudo = { ...conteudo };
-						delete conteudo?.[ano]?.[mesPosicaoNoObjeto];
-						setConteudo(novoEstadoConteudo);
-					}}
-				/>
-			);
-		} else {
-			return (
-				<Icon
-					path={mdiUnfoldMoreHorizontal}
-					size={1}
-					onClick={() => CarregarMes(mesPosicaoNoObjeto)}
-				/>
-			);
+		if (!backupConteudo?.[ano]?.[mes]) {
+			setbackupConteudo({
+				...backupConteudo,
+				[ano]: {
+					...backupConteudo[ano],
+					[mes]: conteudoNovo[ano]?.[mes],
+				},
+			});
 		}
-	};
+		//DETALHE, SE NÃO QUISER UTILIZAR A CONDICIONAL PARA CONFIRMAR EXISTENCIA POSSO FAZER POIS
+		//VAI ATUALIZAR SOMENTE DENTRO DA KEY ESPECIFICA!
+		//SETO BACKUPCONTEUDO somente após verificar se o valor do backupconteudo nao existe
+		//pois se não houver verificação os valores do backup que estou usando são sobreescrevidos
+		//causando aquela falha de busca apos abrir um mes...
 
-	const definirAno = (anoAtivar) => {
-		setAno(anoAtivar);
-		//setConteudo({}); //REMOVE ULTIMO ABERTO DO ANO
+		setLoading(false);
 	};
 
 	const editarPostComprovante = async (id) => {
@@ -184,17 +161,6 @@ function ComprovantesProvider({ children }) {
 		sethandleDadosForm(data);
 		setEditando(true);
 		//console.log(data);
-	};
-
-	const handleDados = (e) => {
-		sethandleDadosForm({
-			...handleDadosForm,
-			[e.target.name]: e.target.value,
-		});
-	};
-
-	const formatMonth = (month) => {
-		return month < 10 ? `0${month}` : `${month}`;
 	};
 
 	const handleSubmitEdit = async (e) => {
@@ -218,9 +184,52 @@ function ComprovantesProvider({ children }) {
 
 		if (response.ok) {
 			closeDialog();
-			CarregarMes(formatMonth(mes));
+			CarregarMes(mes);
 			setLoading(false);
 		}
+	};
+
+	const BotaoOpen = ({ mesPosicaoNoObjeto }) => {
+		//console.log(MesAtivo);
+		if (conteudo?.[ano]?.hasOwnProperty(mesPosicaoNoObjeto)) {
+			return (
+				<BsChevronUp
+					className='icons-react'
+					onClick={() => {
+						const novoEstadoConteudo = { ...conteudo };
+						delete conteudo?.[ano]?.[mesPosicaoNoObjeto];
+						setConteudo(novoEstadoConteudo);
+					}}
+				/>
+			);
+		} else {
+			return (
+				<BsChevronDown
+					className='icons-react'
+					onClick={() => {
+						//console.log(conteudo);
+						//console.log(backupConteudo);
+						CarregarMes(mesPosicaoNoObjeto);
+					}}
+				/>
+			);
+		}
+	};
+
+	const definirAno = (anoAtivar) => {
+		setAno(anoAtivar);
+		//setConteudo({}); //REMOVE ULTIMO ABERTO DO ANO
+	};
+
+	const handleDados = (e) => {
+		sethandleDadosForm({
+			...handleDadosForm,
+			[e.target.name]: e.target.value,
+		});
+	};
+
+	const formatMonth = (month) => {
+		return month < 10 ? `0${month}` : `${month}`;
 	};
 
 	const closeDialog = () => {
@@ -238,7 +247,7 @@ function ComprovantesProvider({ children }) {
 
 			return cifrao ? valorConvertido : valorConvertido.replace('R$', '');
 		} else {
-			return `${cifrao ? 'R$' : ''}0,00`;
+			return `${cifrao ? 'R$  ' : '\u00A0'}0,00`; // Dois espaços após 'R$' e dois espaços antes de '0,00'
 		}
 	};
 
@@ -247,26 +256,41 @@ function ComprovantesProvider({ children }) {
 		return nomeArquivo && lista.pop(); //POP PEGA O ULTIMO ITEM DO ARRAY!
 	};
 
+	const apagarBusca = (posicao) => {
+		const { [posicao]: _, ...novoEstado } = buscaTermo;
+		setbuscaTermo(novoEstado);
+	};
+
 	const buscarFiltrar = (e, ano, mes) => {
+		///console.log(conteudo);
 		e.preventDefault();
 
 		const formData = new FormData(e.currentTarget);
+		const termo = formData.get('buscar');
 
-		let termo = formData.get('buscar');
+		const dados = backupConteudo?.[ano]?.[mes]?.dias;
 
 		if (!termo) {
-			CarregarMes(mes);
-		} else {
-			const dados = conteudo?.[ano]?.[mes]?.dias;
+			//console.log(dados);
+			apagarBusca(mes);
 
+			setConteudo((prevConteudo) => ({
+				...prevConteudo,
+				[ano]: {
+					...prevConteudo[ano],
+					[mes]: backupConteudo[ano][mes],
+				},
+			})); //SETA DIRETAMENTE O MES COM BACKUP DO CONTEUDO
+		} else {
 			let resultadosFiltrados = {};
 
 			for (const dia in dados) {
-				dados[dia].forEach((comprovante) => {
+				dados?.[dia].forEach((comprovante) => {
 					if (
 						comprovante.motivoComprovante
+							.trim()
 							.toLowerCase()
-							.includes(termo.toLowerCase())
+							.includes(termo.trim().toLowerCase())
 					) {
 						if (resultadosFiltrados.hasOwnProperty(dia)) {
 							resultadosFiltrados[dia].push(comprovante);
@@ -277,16 +301,6 @@ function ComprovantesProvider({ children }) {
 				});
 			}
 
-			//CORREÇÂO
-			if (!Object.keys(resultadosFiltrados).length) {
-				resultadosFiltrados = {
-					na: {
-						results: 0,
-						message: 'Nenhum resultado!',
-					},
-				};
-			}
-
 			setConteudo({
 				...conteudo,
 				[ano]: {
@@ -294,10 +308,11 @@ function ComprovantesProvider({ children }) {
 					[mes]: {
 						...conteudo[ano]?.[mes],
 						dias: resultadosFiltrados,
-						//active: true,
 					},
 				},
 			});
+
+			setbuscaTermo({ ...buscaTermo, [mes]: termo });
 		}
 	};
 
@@ -313,14 +328,31 @@ function ComprovantesProvider({ children }) {
 						name='buscar'
 						type='text'
 						autoComplete='off'
-						placeholder='Filtrar motivo...'
+						placeholder={
+							buscaTermo.hasOwnProperty(mes) ? buscaTermo[mes] : 'Buscar por...'
+						}
 					/>
 					<button type='submit'>
-						<Icon path={mdiTextSearchVariant} size={1} />
+						<BsSearch className='icons-react' />
 					</button>
 				</div>
 			</form>
 		);
+	};
+
+	const alternarAberto = () => {
+		setAberto(!aberto);
+	};
+
+	const CorDoBanco = ({ banco }) => {
+		const cores = {
+			Bradesco: '#ff0000',
+			Banestes: '#79bce7',
+			Caixa: '#0000ff',
+		};
+
+		const cor = cores[banco] || 'gray';
+		return <BsDot className='icons-react' color={cor} />;
 	};
 
 	return (
@@ -348,6 +380,8 @@ function ComprovantesProvider({ children }) {
 				Busca,
 				totalMensal,
 				loadingHeaders,
+				aberto,
+				CorDoBanco,
 			}}>
 			{children}
 		</ComprovantesContext.Provider>

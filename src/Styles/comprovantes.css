@@ -2,6 +2,7 @@
   box-sizing: border-box;
   font-size: small;
   outline: none;
+  font-family: Inter, Inter Fallback;
 }
 
 body {
@@ -17,6 +18,26 @@ body a {
   color: #000;
   text-decoration: none;
   display: flex;
+}
+
+body.tema-escuro {
+  background-color: #000;
+  color: pink;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 400px;
+  padding: 0;
+  margin: 0 auto;
+}
+body.tema-escuro a {
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+}
+
+.icons-react {
+  font-size: 18px;
 }
 
 .menu {
@@ -73,14 +94,15 @@ body a {
   height: 28px;
 }
 .comprovantes .comprovantes-principal .comprovantes-header .funcoes-header {
-  padding: 5px;
   display: flex;
   align-items: center;
+  justify-content: start;
 }
 .comprovantes .comprovantes-principal .comprovantes-header .funcoes-header div {
   margin: 5px;
 }
 .comprovantes .comprovantes-principal .comprovantes-header .funcoes-header .funcoes-header-total {
+  margin: 0 5px;
   display: flex;
   font-weight: bold;
 }
@@ -91,11 +113,20 @@ body a {
   opacity: 0.3;
 }
 .comprovantes .comprovantes-principal .comprovantes-header .header-mes {
-  font-weight: bold;
-  font-size: medium;
+  display: flex;
+  align-items: center;
   margin: 0;
   padding: 5px;
   flex-grow: 1;
+}
+.comprovantes .comprovantes-principal .comprovantes-header .header-mes .icon {
+  display: flex;
+  margin: 0 5px 0 0;
+}
+.comprovantes .comprovantes-principal .comprovantes-header .header-mes .mes {
+  display: flex;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 .comprovantes .comprovantes-principal .comprovantes-header .buttons-header {
   display: flex;
@@ -113,22 +144,21 @@ body a {
   position: relative;
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-grupo-busca {
-  position: absolute;
-  top: 0;
-  right: 0;
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  height: 28px;
   background: transparent;
   margin: 0 2px;
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-grupo-busca .comprovantes-grupo-busca-active {
   display: flex;
   align-items: center;
+  border: 1px dashed rgb(194, 194, 194);
   padding: 2px;
   height: 25px;
   background: #fff;
-  width: 70%;
+  width: 100%;
   z-index: 99;
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-grupo-busca .comprovantes-grupo-busca-active input[type=text] {
@@ -188,7 +218,6 @@ body a {
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-dia-wrapper .comprovantes-dia .comprovantes-dia-botoes {
   display: flex;
-  align-items: center;
   padding: 0 5px 0 0;
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-dia-wrapper .comprovantes-dia .comprovantes-dia-botoes a {
@@ -204,11 +233,11 @@ body a {
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-dia-wrapper .comprovantes-dia .comprovantes-dia-valor {
   font-weight: bold;
+  display: flex;
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes {
   display: flex;
   flex-direction: column;
-  padding: 5px;
   font-weight: bold;
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes .comprovantes-mes-total-dados {
@@ -240,8 +269,16 @@ body a {
   border-right: 0;
   text-align: center;
 }
-.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes .comprovantes-mes-total-gasto-cartao span {
-  font-weight: bold;
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes .comprovantes-mes-total-gasto-cartao .comprovante-mes-total-cartao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes .comprovantes-mes-total-gasto-cartao .comprovante-mes-total-cartao div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes .comprovantes-mes-total {
   font-weight: bold;
@@ -440,7 +477,8 @@ body a {
   opacity: 0.3;
   border: 1px solid rgb(194, 194, 194);
   background-color: rgba(102, 102, 102, 0.059);
-  transition: all 250ms ease-in-out 0s;
+  transition-property: opacity, background-color;
+  transition: 250ms ease-in-out 0s;
 }
 
 .modal-button:hover {

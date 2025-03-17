@@ -15,6 +15,10 @@ $darkModeTexts: #fff;
     box-sizing: border-box;
     font-size: small;
     outline: none;
+
+    font-family:
+        Inter,
+        Inter Fallback;
 }
 
 body {
@@ -27,13 +31,35 @@ body {
     //width: 100%;
     margin: 0 auto;
 
-    //font-family: sans-serif;
-
     a {
         color: #000;
         text-decoration: none;
         display: flex;
     }
+
+    //transition: all 500ms ease-in-out 0s;
+}
+
+body.tema-escuro {
+    background-color: #000;
+    color: pink;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 400px;
+    padding: 0;
+    margin: 0 auto;
+    //transition: all 500ms ease-in-out 0s;
+
+    a {
+        color: #fff;
+        text-decoration: none;
+        display: flex;
+    }
+}
+
+.icons-react {
+    font-size: 18px;
 }
 
 .menu {
@@ -98,15 +124,19 @@ body {
             height: $larguraHeaders;
 
             .funcoes-header {
-                padding: 5px;
+                //padding: 5px;
                 display: flex;
                 align-items: center;
+                //align-content: end;
+                justify-content: start;
 
                 div {
                     margin: 5px;
                 }
 
                 .funcoes-header-total {
+                    //width: 80px;
+                    margin: 0 5px;
                     display: flex;
                     font-weight: bold;
                 }
@@ -121,12 +151,24 @@ body {
             }
 
             .header-mes {
-                font-weight: bold;
-                font-size: medium;
+                display: flex;
+                align-items: center;
                 margin: 0;
                 padding: 5px;
                 flex-grow: 1;
                 //color: $laranjaPadrao;
+
+                .icon {
+                    display: flex;
+                    margin: 0 5px 0 0;
+                }
+
+                .mes {
+                    display: flex;
+                    font-weight: bold;
+                    text-transform: uppercase;
+                    //font-size: medium;
+                }
             }
 
             .buttons-header {
@@ -148,27 +190,27 @@ body {
             position: relative;
 
             .comprovantes-grupo-busca {
-                position: absolute;
-                top: 0;
-                right: 0;
+                //position: absolute;
+                //top: 0;
+                //right: 0;
                 //bottom: 50%;
                 display: flex;
                 //position: relative;
                 justify-content: flex-end;
                 align-items: center;
-                //height: $larguraHeaders;
+                height: $larguraHeaders;
                 background: transparent;
                 margin: 0 2px;
 
                 .comprovantes-grupo-busca-active {
                     display: flex;
                     align-items: center;
-                    //border: 1px dashed $bordas;
+                    border: 1px dashed $bordas;
                     //border-left: 1px dashed $bordas;
                     padding: 2px;
                     height: 25px;
                     background: #fff;
-                    width: 70%;
+                    width: 100%;
                     z-index: 99;
 
                     input[type="text"] {
@@ -238,12 +280,11 @@ body {
 
                         .comprovantes-dia-botoes {
                             display: flex;
-                            align-items: center;
+                            //align-items: center;
                             padding: 0 5px 0 0;
                             a {
                                 color: $bordas;
                             }
-                            //font-weight: bold;
                         }
 
                         .comprovantes-dia-motivo {
@@ -262,7 +303,11 @@ body {
                             //text-align: center;
                             //background-color: red;
                             font-weight: bold;
+                            display: flex;
                         }
+                    }
+
+                    .comprovantes-dia-caixa {
                     }
                 }
             }
@@ -270,7 +315,7 @@ body {
             .comprovantes-mes-total-mes {
                 display: flex;
                 flex-direction: column;
-                padding: 5px;
+                //padding: 5px;
                 font-weight: bold;
 
                 .comprovantes-mes-total-dados {
@@ -304,8 +349,17 @@ body {
                     border-right: 0;
                     text-align: center;
 
-                    span {
-                        font-weight: bold;
+                    .comprovante-mes-total-cartao {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+
+                        div {
+                            display: flex;
+                            flex-direction: row;
+                            align-items: center;
+                            justify-content: center;
+                        }
                     }
                 }
 
@@ -530,7 +584,8 @@ body {
     opacity: 0.3;
     border: 1px solid $bordas;
     background-color: $backgroundsClarinho;
-    transition: all 250ms ease-in-out 0s;
+    transition-property: opacity, background-color;
+    transition: 250ms ease-in-out 0s;
 }
 
 .modal-button:hover {

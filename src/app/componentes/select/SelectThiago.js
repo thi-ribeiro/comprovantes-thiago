@@ -1,9 +1,8 @@
 'use client';
 
 import { Gfetch } from '@/app/Fetch/FetchGlobal';
-import { mdiChevronDown } from '@mdi/js';
-import Icon from '@mdi/react';
 import React, { useRef, useState, useEffect } from 'react';
+import { BsChevronDown } from 'react-icons/bs';
 
 export default function SelectThiago({ onAnoSelecionado, dadosFetch }) {
 	const [dropdownState, setdropdownState] = useState(false);
@@ -63,7 +62,7 @@ export default function SelectThiago({ onAnoSelecionado, dadosFetch }) {
 				<div
 					className='select-header-arrow'
 					onClick={() => setdropdownState(!dropdownState)}>
-					<Icon path={mdiChevronDown} size={1} />
+					<BsChevronDown className='icons-react' />
 				</div>
 			</div>
 			{dropdownState && (

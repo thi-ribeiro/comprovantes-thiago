@@ -3,7 +3,7 @@
 import { LoginContext } from '@/app/context/login/LoginContext';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 export default function Menu() {
 	const { user } = useContext(LoginContext);
@@ -24,6 +24,26 @@ export default function Menu() {
 		},
 	];
 
+	function BotaoTema() {
+		const [tema, setTema] = useState('padrao'); // Estado inicial
+
+		useEffect(() => {
+			if (tema) {
+				document.body.className = tema; // Aplica a classe ao body
+			}
+		}, [tema]);
+
+		const alternarTema = () => {
+			setTema(tema === 'padrao' ? 'tema-escuro' : 'padrao');
+		};
+
+		return (
+			<button onClick={alternarTema}>
+				Alternar para {tema === 'padrao' ? 'Tema Escuro' : 'Tema Claro'}
+			</button>
+		);
+	}
+
 	return (
 		<nav className='menu'>
 			<ul>
@@ -40,6 +60,9 @@ export default function Menu() {
 						</li>
 					);
 				})}
+				{/* <li>
+					<BotaoTema />
+				</li> */}
 			</ul>
 		</nav>
 	);

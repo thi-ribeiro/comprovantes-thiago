@@ -1,16 +1,8 @@
 'use client';
 
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import _ from 'lodash';
-import Icon from '@mdi/react';
-import {
-	mdiCalendarBadge,
-	mdiCalendarBadgeOutline,
-	mdiCalendarFilter,
-	mdiCalendarFilterOutline,
-	mdiCurrentDc,
-	mdiLinkVariant,
-} from '@mdi/js';
+
 import { Gfetch } from './Fetch/FetchGlobal';
 import SelectThiago from './componentes/select/SelectThiago';
 import Addbutton from './componentes/addbutton/Addbutton';
@@ -18,6 +10,9 @@ import EditButton from './componentes/editButton/EditButton';
 import ComprovantesProvider, {
 	ComprovantesContext,
 } from './context/Comprovantes/ComprovantesContext';
+import { BsCalendar, BsLink45Deg } from 'react-icons/bs';
+import AnimatedItem from './componentes/animated/AnimatedItem';
+import TotalCartoes from './componentes/cartoes/TotalCartoes';
 
 export default function Page() {
 	return (
@@ -48,7 +43,6 @@ function Conteudo() {
 	const {
 		CarregarMes,
 		conteudo,
-		gastoCartoes,
 		definirAno,
 		BotaoOpen,
 		loading,
@@ -59,81 +53,31 @@ function Conteudo() {
 		Busca,
 		totalMensal,
 		loadingHeaders,
+		CorDoBanco,
 	} = useContext(ComprovantesContext);
 
-	const HeaderFunctions = ({ mes }) => {
-		if (loadingHeaders) {
-			return <div className='funcoes-header-loading loader'></div>;
-		}
+	const refMudar = useRef(null);
 
-		let totalMes = totalMensal[ano];
-
-		if (totalMes.hasOwnProperty(mes)) {
-			return (
-				<div className='funcoes-header-total'>
-					R$
-					<span className='span-color'>
-						{converterParaReal(totalMensal[ano][mes], false)}
-					</span>
-				</div>
-			);
-		}
+	const HeaderFunctions = ({ Mes }) => {
+		let total = totalMensal?.[ano]?.[Mes];
+		return (
+			<div className='funcoes-header-total'>
+				{loadingHeaders ? (
+					<div className='funcoes-header-loading loader'></div>
+				) : (
+					<>
+						R$
+						<span className='span-color'>
+							{converterParaReal(total, false)}
+						</span>
+					</>
+				)}
+			</div>
+		);
 	};
 
-	const Reduzir = (nome, limite) => {
-		if (nome.length > limite) {
-			return nome.substring(0, limite).trim() + '...';
-		} else {
-			return nome.trim();
-		}
-	};
-
-	const TotalMesCartoes = ({ mesTotal, arrayBancos, mesReferencia }) => {
-		if (mesTotal > 0 || arrayBancos.hasOwnProperty(mesReferencia)) {
-			return (
-				<div className='comprovantes-mes-total-mes'>
-					<div className='comprovantes-mes-total-gasto-cartao'>
-						<div className='comprovante-mes-total-cartao-bradesco'>
-							<span>Bradesco</span>
-							<br />
-							{converterParaReal(gastoCartoes[mesReferencia]['Bradesco'])}
-						</div>
-						<div className='comprovante-mes-total-cartao-banestes'>
-							<span>Banestes</span> <br />
-							{converterParaReal(gastoCartoes[mesReferencia]['Banestes'])}
-						</div>
-						<div className='comprovante-mes-total-cartao-caixa'>
-							<span>Caixa</span> <br />
-							{converterParaReal(gastoCartoes[mesReferencia]['Caixa'])}
-						</div>
-					</div>
-					<div className='comprovantes-mes-total-dados'>
-						<div className='comprovantes-mes-total-completo'>
-							<div>
-								<Icon path={mdiCalendarBadgeOutline} size={1} />
-							</div>
-							<span className='span-color'>R$ </span>
-							<div>
-								{converterParaReal(totalMensal[ano][mesReferencia], false)}
-							</div>
-						</div>
-						{totalMensal[ano][mesReferencia] !== mesTotal && (
-							<div className='comprovantes-mes-total-filtrado'>
-								<div>
-									<Icon path={mdiCalendarFilterOutline} size={1} />
-								</div>
-								<span className='span-color'>R$ </span>
-								<div>{converterParaReal(mesTotal, false)}</div>
-							</div>
-						)}
-					</div>
-				</div>
-			);
-		}
-	};
-
-	const LayoutMes = ({ MesNumerico, loading }) => {
-		if (loading && MesAtivo.mes === MesNumerico) {
+	const LayoutMes = ({ Mes, Loading, Conteudo }) => {
+		if (Loading && MesAtivo.mes === Mes) {
 			return (
 				<div className='comprovantes-loading'>
 					Carregando &nbsp;&nbsp;&nbsp;<div className='loader'></div>
@@ -141,99 +85,89 @@ function Conteudo() {
 			);
 		}
 
-		let conteudoAnoMes = conteudo?.[ano]?.[MesNumerico] || {};
-
-		if (Object?.keys(conteudoAnoMes)?.length) {
-			let conteudoDia = conteudoAnoMes?.dias;
+		if (Conteudo) {
 			let valorFinalMes = 0;
 
-			if (conteudoDia) {
+			if (!Conteudo?.dias) {
 				return (
-					<div className='comprovantes-grupo'>
-						<Busca ano={ano} mes={MesNumerico} />
-						{conteudoDia.hasOwnProperty('na') ? (
-							<div className='comprovantes-grupo-vazio'>
-								{conteudoDia?.['na'].message}
-							</div>
-						) : (
-							Object.keys(conteudoDia)
-								?.sort()
-								?.map((dia, ind) => {
-									let valorTotalDia = 0;
-									return (
-										<div key={ind} className='comprovantes-mes'>
-											<div className='comprovantes-mes-dia-header' key={ind}>
-												{dia}
-											</div>
-											<div className='comprovantes-mes-dia-wrapper'>
-												{Object?.values(conteudoDia?.[dia]).map(
-													(ConteudoDia) => {
-														let {
-															idComprovante,
-															motivoComprovante,
-															usuarioComprovante,
-															linkComprovante,
-															valorComprovante,
-														} = ConteudoDia;
-
-														valorTotalDia =
-															parseFloat(valorTotalDia) +
-															parseFloat(valorComprovante || 0);
-														valorFinalMes =
-															parseFloat(valorFinalMes) +
-															parseFloat(valorComprovante);
-														return (
-															<div
-																key={idComprovante}
-																className='comprovantes-dia'>
-																<div className='comprovantes-dia-botoes'>
-																	<a
-																		href={`${Gfetch}/${linkComprovante}`}
-																		alt={usuarioComprovante}
-																		target='_blank'
-																		rel='noopener noreferrer'>
-																		<Icon path={mdiLinkVariant} size={1} />
-																	</a>
-																</div>
-																<div className='comprovantes-dia-usuario'>
-																	{usuarioComprovante}
-																</div>
-																<div
-																	className='comprovantes-dia-motivo'
-																	onClick={() =>
-																		editarPostComprovante(idComprovante)
-																	}>
-																	<span>{motivoComprovante}</span>
-																</div>
-
-																<div className='comprovantes-dia-valor'>
-																	{converterParaReal(valorComprovante)}
-																</div>
-															</div>
-														);
-													}
-												)}
-											</div>
-											<div className='comprovantes-mes-total-dia'>
-												<span className='span-color'>
-													{converterParaReal(valorTotalDia)}
-												</span>
-											</div>
-										</div>
-									);
-								})
-						)}
-						<TotalMesCartoes
-							mesTotal={valorFinalMes}
-							mesReferencia={MesNumerico}
-							arrayBancos={gastoCartoes}
-						/>
+					<div className='comprovantes-grupo comprovantes-vazio' ref={refMudar}>
+						Nenhum comprovante.
 					</div>
 				);
 			} else {
 				return (
-					<div className='comprovantes-grupo comprovantes-vazio'>
-						Nenhum comprovante.
+					<div className='comprovantes-grupo' ref={refMudar}>
+						<Busca ano={ano} mes={Mes} />
+						{!Object?.keys(Conteudo?.dias).length ? (
+							<div className='comprovantes-grupo-vazio'>
+								Nenhum resultado para busca.
+							</div>
+						) : null}
+						{Object?.keys(Conteudo?.dias)?.map((dia, index) => {
+							let valorTotalDia = 0;
+
+							return (
+								<div key={index} className='comprovantes-mes'>
+									<div className='comprovantes-mes-dia-header'>{dia}</div>
+									<div className='comprovantes-mes-dia-wrapper'>
+										{Object?.values(Conteudo?.dias[dia])?.map(
+											(conteudoDia, indexConteudo) => {
+												let {
+													idComprovante,
+													motivoComprovante,
+													usuarioComprovante,
+													linkComprovante,
+													valorComprovante,
+													cartaoComprovante,
+												} = conteudoDia;
+
+												valorTotalDia =
+													parseFloat(valorTotalDia) +
+													parseFloat(valorComprovante || 0);
+												valorFinalMes =
+													parseFloat(valorFinalMes) +
+													parseFloat(valorComprovante);
+												return (
+													<div key={idComprovante} className='comprovantes-dia'>
+														<div className='comprovantes-dia-botoes'>
+															<a
+																href={`${Gfetch}/${linkComprovante}`}
+																alt={usuarioComprovante}
+																target='_blank'
+																rel='noopener noreferrer'>
+																<BsLink45Deg className='icons-react' />
+															</a>
+														</div>
+														<div className='comprovantes-dia-usuario'>
+															{usuarioComprovante}
+														</div>
+														<div
+															className='comprovantes-dia-motivo'
+															onClick={() =>
+																editarPostComprovante(idComprovante)
+															}>
+															<span>{motivoComprovante}</span>
+														</div>
+
+														<div className='comprovantes-dia-valor'>
+															<CorDoBanco banco={cartaoComprovante} />
+															{converterParaReal(valorComprovante)}
+														</div>
+													</div>
+												);
+											}
+										)}
+									</div>
+
+									<div className='comprovantes-mes-total-dia'>
+										<span className='span-color'>
+											{converterParaReal(valorTotalDia)}
+										</span>
+									</div>
+								</div>
+							);
+						})}
+						<TotalCartoes mes={Mes} ano={ano} />
 					</div>
 				);
 			}
@@ -245,23 +179,40 @@ function Conteudo() {
 			<SelectThiago onAnoSelecionado={(e) => definirAno(e)} />
 			<div className='comprovantes'>
 				{meses.map(([NumMes, Mes]) => {
+					let conteudoAno = conteudo?.[ano];
+					let conteudoAnoMes = conteudoAno?.[NumMes];
+
 					return (
 						<div key={NumMes} className='comprovantes-principal'>
 							<div className='comprovantes-header'>
-								<div className='header-mes'>{Mes}</div>
+								<div className='header-mes'>
+									<div className='icon'>
+										<BsCalendar className='icons-react' />
+									</div>
+									<div className='mes'>{Mes}</div>
+								</div>
 								<div className='funcoes-header'>
-									<HeaderFunctions mes={NumMes} />
+									<HeaderFunctions Mes={NumMes} />
 								</div>
 								<div className='header-divisor'></div>
 								<div className='buttons-header'>
 									<BotaoOpen mesPosicaoNoObjeto={NumMes} />
 								</div>
 							</div>
-							<LayoutMes MesNumerico={NumMes} loading={loading} />
+							<AnimatedItem
+								isActive={conteudoAno?.hasOwnProperty(NumMes)}
+								refComponente={refMudar}>
+								<LayoutMes
+									Mes={NumMes}
+									Loading={loading}
+									Conteudo={conteudoAnoMes}
+								/>
+							</AnimatedItem>
 						</div>
 					);
 				})}
 			</div>
+
 			<EditButton />
 			<Addbutton onEnd={(mes) => CarregarMes(mes)} />
 		</>
