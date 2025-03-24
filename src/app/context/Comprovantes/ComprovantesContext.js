@@ -17,12 +17,11 @@ function ComprovantesProvider({ children }) {
 	const [loadingHeaders, setLoadingHeaders] = useState(true); //A IDEIA ERA COMEÇAR JÁ RODANDO LOADING
 	const [MesAtivo, setMesAtivo] = useState({});
 	const [gastoCartoes, setgastoCartoes] = useState({});
-	const [handleDadosForm, sethandleDadosForm] = useState({});
-	const [editando, setEditando] = useState(null);
+
+	const [editando, setEditando] = useState({});
 	const [idEditando, setidEditando] = useState(null);
 	const [dadosFiltrados, setDadosFiltrados] = useState({});
 	const [totalMensal, settotalMensal] = useState([]);
-	const [aberto, setAberto] = useState(false);
 
 	const [buscaTermo, setbuscaTermo] = useState({});
 	const [backupConteudo, setbackupConteudo] = useState({});
@@ -116,6 +115,8 @@ function ComprovantesProvider({ children }) {
 			groupedByDay = null;
 		}
 
+		//console.log(groupedByDay);
+
 		const conteudoNovo = { ...conteudo };
 		conteudoNovo[ano] = {
 			...conteudoNovo[ano],
@@ -129,15 +130,15 @@ function ComprovantesProvider({ children }) {
 
 		setConteudo(conteudoNovo);
 
-		if (!backupConteudo?.[ano]?.[mes]) {
-			setbackupConteudo({
-				...backupConteudo,
-				[ano]: {
-					...backupConteudo[ano],
-					[mes]: conteudoNovo[ano]?.[mes],
-				},
-			});
-		}
+		//if (!backupConteudo?.[ano]?.[mes]) {
+		setbackupConteudo({
+			...backupConteudo,
+			[ano]: {
+				...backupConteudo[ano],
+				[mes]: conteudoNovo[ano]?.[mes],
+			},
+		});
+		//}
 		//DETALHE, SE NÃO QUISER UTILIZAR A CONDICIONAL PARA CONFIRMAR EXISTENCIA POSSO FAZER POIS
 		//VAI ATUALIZAR SOMENTE DENTRO DA KEY ESPECIFICA!
 		//SETO BACKUPCONTEUDO somente após verificar se o valor do backupconteudo nao existe
@@ -147,46 +148,12 @@ function ComprovantesProvider({ children }) {
 		setLoading(false);
 	};
 
-	const editarPostComprovante = async (id) => {
-		setidEditando(id);
-		const response = await fetch(`${Gfetch}/data/comprovante`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ idComprovante: id }),
-		});
-		const data = await response.json();
+	const editarPostComprovante = async (id, mes) => {
+		const comprovanteEncontrado = Object.values(conteudo[ano][mes].dias)
+			.flatMap((comprovantes) => comprovantes)
+			.find((comprovante) => comprovante.idComprovante === id);
 
-		sethandleDadosForm(data);
-		setEditando(true);
-		//console.log(data);
-	};
-
-	const handleSubmitEdit = async (e) => {
-		e.preventDefault();
-
-		const [ano, mes, dia] = handleDadosForm?.data.split('-');
-
-		setLoading(true);
-
-		const formData = new FormData(e.currentTarget);
-
-		formData.append('idEditar', idEditando);
-		formData.append('editar', true);
-
-		const response = await fetch(`${Gfetch}/upload`, {
-			method: 'POST',
-			body: formData,
-		});
-
-		const data = await response.json();
-
-		if (response.ok) {
-			closeDialog();
-			CarregarMes(mes);
-			setLoading(false);
-		}
+		setidEditando(comprovanteEncontrado);
 	};
 
 	const BotaoOpen = ({ mesPosicaoNoObjeto }) => {
@@ -221,21 +188,14 @@ function ComprovantesProvider({ children }) {
 		//setConteudo({}); //REMOVE ULTIMO ABERTO DO ANO
 	};
 
-	const handleDados = (e) => {
-		sethandleDadosForm({
-			...handleDadosForm,
-			[e.target.name]: e.target.value,
-		});
-	};
-
-	const formatMonth = (month) => {
-		return month < 10 ? `0${month}` : `${month}`;
-	};
-
 	const closeDialog = () => {
 		setEditando(false);
-		sethandleDadosForm({});
+		//clearForms();
 		setidEditando({});
+	};
+
+	const clearForms = () => {
+		sethandleDadosForm({});
 	};
 
 	const converterParaReal = (valor, cifrao = true) => {
@@ -271,9 +231,9 @@ function ComprovantesProvider({ children }) {
 		const dados = backupConteudo?.[ano]?.[mes]?.dias;
 
 		if (!termo) {
-			//console.log(dados);
 			apagarBusca(mes);
 
+			//if (backupConteudo?.[ano]?.[mes]?.dias !== conteudo?.[ano]?.[mes]?.dias) {
 			setConteudo((prevConteudo) => ({
 				...prevConteudo,
 				[ano]: {
@@ -281,6 +241,7 @@ function ComprovantesProvider({ children }) {
 					[mes]: backupConteudo[ano][mes],
 				},
 			})); //SETA DIRETAMENTE O MES COM BACKUP DO CONTEUDO
+			//}
 		} else {
 			let resultadosFiltrados = {};
 
@@ -320,7 +281,6 @@ function ComprovantesProvider({ children }) {
 		//console.log(mes);
 		return (
 			<form
-				key={ano + mes}
 				className='comprovantes-grupo-busca'
 				onSubmit={(e) => buscarFiltrar(e, ano, mes)}>
 				<div className='comprovantes-grupo-busca-active'>
@@ -338,10 +298,6 @@ function ComprovantesProvider({ children }) {
 				</div>
 			</form>
 		);
-	};
-
-	const alternarAberto = () => {
-		setAberto(!aberto);
 	};
 
 	const CorDoBanco = ({ banco }) => {
@@ -362,6 +318,7 @@ function ComprovantesProvider({ children }) {
 				CarregarMes,
 				converterParaReal,
 				conteudo,
+				setConteudo,
 				gastoCartoes,
 				definirAno,
 				BotaoOpen,
@@ -371,17 +328,17 @@ function ComprovantesProvider({ children }) {
 				editarPostComprovante,
 				editando,
 				closeDialog,
-				handleDadosForm,
-				handleDados,
-				handleSubmitEdit,
+				idEditando,
 				fileNamePop,
 				dadosFiltrados,
 				buscarFiltrar,
 				Busca,
 				totalMensal,
 				loadingHeaders,
-				aberto,
 				CorDoBanco,
+				clearForms,
+				backupConteudo,
+				setbackupConteudo,
 			}}>
 			{children}
 		</ComprovantesContext.Provider>

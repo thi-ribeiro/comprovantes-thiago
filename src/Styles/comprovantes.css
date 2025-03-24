@@ -197,23 +197,14 @@ body.tema-escuro a {
   text-transform: capitalize;
   width: 50px;
 }
-.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-total-dia {
-  display: flex;
-  justify-content: flex-end;
-  padding: 2px 5px;
-  font-weight: bold;
-}
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-dia-wrapper {
+  padding: 2px 0;
   border-top: 1px solid rgb(194, 194, 194);
   border-bottom: 1px solid rgb(194, 194, 194);
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-dia-wrapper .comprovantes-dia {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  border-left: 0;
-  border-right: 0;
-  margin: 1px 0;
   padding: 0 5px;
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-dia-wrapper .comprovantes-dia .comprovantes-dia-botoes {
@@ -234,6 +225,12 @@ body.tema-escuro a {
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-dia-wrapper .comprovantes-dia .comprovantes-dia-valor {
   font-weight: bold;
   display: flex;
+}
+.comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes .comprovantes-mes-dia-total {
+  display: flex;
+  justify-content: flex-end;
+  padding: 2px 5px;
+  font-weight: bold;
 }
 .comprovantes .comprovantes-principal .comprovantes-grupo .comprovantes-mes-total-mes {
   display: flex;
@@ -499,6 +496,9 @@ input[type=file] {
   border: none;
 }
 
+.relatorio {
+  width: 100vh;
+}
 .relatorio .relatorio-busca {
   display: flex;
   margin: 5px 0;
@@ -514,8 +514,10 @@ input[type=file] {
 }
 .relatorio .dias-layout-impressao .dias-layout-impressao-dia {
   font-weight: bold;
-  margin: 5px;
-  font-size: medium;
+  padding: 0 5px;
+  font-size: small;
+  background-color: rgba(102, 102, 102, 0.059);
+  color: rgb(255, 128, 0);
 }
 .relatorio .dias-layout-impressao table {
   width: 100%;
@@ -528,19 +530,32 @@ input[type=file] {
   text-align: left;
   background-color: rgba(102, 102, 102, 0.059);
 }
-.relatorio .dias-layout-impressao th {
+.relatorio .dias-layout-impressao table th {
   border: 1px solid rgb(194, 194, 194);
+  border-bottom: none;
   padding: 5px;
 }
-.relatorio .dias-layout-impressao tr {
-  text-align: center;
+.relatorio .dias-layout-impressao table .th1 {
+  width: 80px;
 }
-.relatorio .dias-layout-impressao td {
-  min-width: 180px;
+.relatorio .dias-layout-impressao table .th2 {
+  width: 95px;
+}
+.relatorio .dias-layout-impressao table .th3 {
+  width: 200px;
+}
+.relatorio .dias-layout-impressao table .th4 {
+  width: 100px;
+}
+.relatorio .dias-layout-impressao table tr {
+  text-align: center;
+  transition: background-color 500ms ease 0s;
+}
+.relatorio .dias-layout-impressao table tbody tr:hover {
+  background-color: rgba(102, 102, 102, 0.059);
+}
+.relatorio .dias-layout-impressao table td {
+  white-space: nowrap;
   border: 1px solid rgb(194, 194, 194);
   padding: 0 5px;
-}
-.relatorio .dias-layout-impressao .tg-01,
-.relatorio .dias-layout-impressao .tg-02 {
-  min-width: 80px;
 }/*# sourceMappingURL=comprovantes.css.map */

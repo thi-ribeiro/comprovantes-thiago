@@ -1,30 +1,124 @@
 import { ComprovantesContext } from '@/app/context/Comprovantes/ComprovantesContext';
+import { Gfetch } from '@/app/Fetch/FetchGlobal';
 import { mdiClose } from '@mdi/js';
 import Icon from '@mdi/react';
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 export default function EditButton() {
 	const DialogRef = useRef(null);
 
+	const [handleDadosForm, sethandleDadosForm] = useState({
+		dataComprovante: '2024-01-01 00:00:00', // Valor inicial
+		dataComprovanteData: '2024-01-01', // Valor inicial
+		dataComprovanteHora: '00:00:00', // Valor inicial
+		cartaoComprovante: '', // Valor inicial
+		usuarioComprovante: '', // Valor inicial
+		motivoComprovante: '', // Valor inicial
+		valorComprovante: '', // Valor inicial
+		linkComprovante: '', // valor inicial
+	});
+
+	const [loading, setloading] = useState(false);
+
 	const {
-		editando,
+		idEditando,
 		closeDialog,
-		handleDadosForm,
-		handleDados,
-		handleSubmitEdit,
-		loading,
 		fileNamePop,
+		conteudo,
+		CarregarMes,
+		setConteudo,
+		backupConteudo,
+		setbackupConteudo,
 	} = useContext(ComprovantesContext);
 
 	useEffect(() => {
-		let dialog = DialogRef.current;
+		const dialog = DialogRef.current;
 
-		if (editando) {
+		if (idEditando?.idComprovante !== undefined) {
 			dialog.showModal();
+			sethandleDadosForm(idEditando);
 		} else {
 			dialog.close();
 		}
-	}, [editando]);
+		//console.log(conteudo);
+	}, [idEditando, conteudo, backupConteudo, DialogRef]);
+
+	const handleDados = (e) => {
+		sethandleDadosForm({
+			...handleDadosForm,
+			[e.target.name]: e.target.value,
+		});
+	};
+
+	const handleSubmitEdit = async (e) => {
+		e.preventDefault();
+
+		const formData = new FormData(e.currentTarget);
+		const [ano, mes, dia] = formData?.get('dataComprovanteData')?.split('-');
+		const [anoOld, mesOld, diaOld] = handleDadosForm?.dataComprovante
+			?.split(' ')[0]
+			.split('-');
+
+		formData.append('idEditar', idEditando?.idComprovante);
+
+		let olderBuild = `${diaOld}/${mesOld}/${anoOld}`;
+		// // //console.log(conteudo?.[ano]?.[mesOld]?.dias?.[olderBuild]);
+		let conteudoCopi = conteudo?.[ano]?.[mesOld]?.dias?.[olderBuild];
+		let conteudoCopi2 = backupConteudo?.[ano]?.[mesOld]?.dias?.[olderBuild];
+		//VAI PEGAR O VALOR DO CONTEUDO ORIGINAL
+
+		const index = conteudoCopi.findIndex(
+			(comprovante) => comprovante.idComprovante === idEditando?.idComprovante
+		);
+		//VERIFICA O ID QUAL INDEX QUE ESTA
+
+		const novoEstadoConteudo = { ...conteudo };
+		//FAZ UMA COPIA DO CONTEUDO COMPLETO OU BACKUP
+
+		Object.keys(conteudoCopi).length === 1
+			? delete novoEstadoConteudo?.[ano]?.[mesOld]?.dias?.[olderBuild]
+			: delete novoEstadoConteudo?.[ano]?.[mesOld]?.dias?.[olderBuild][index];
+		//VERIFICA SE TEM 1 OCORRENCIA
+		//SE TIVER 1 OCORRENCIA APAGA O DIA DO MES
+		//SE TIVER MAIS OCORRENCIAS APAGA O INDEX DA OCORRENCIA DO ID
+
+		//console.log('removi: ', novoEstadoConteudo);
+		setConteudo(novoEstadoConteudo);
+
+		const estadoBack = { ...backupConteudo };
+		//FAZ UMA COPIA DO CONTEUDO COMPLETO OU BACKUP
+
+		//console.log('Leng of conteudoCopi:', Object.keys(conteudoCopi).length);
+
+		Object.keys(conteudoCopi2).length === 1
+			? delete estadoBack?.[ano]?.[mesOld]?.dias?.[olderBuild]
+			: delete estadoBack?.[ano]?.[mesOld]?.dias?.[olderBuild]?.[index];
+
+		setbackupConteudo(estadoBack);
+		//console.log('removi do backup: ', estadoBack);
+		// //FUNCIONA BEM REMOVENDO O ULTIMO ATUALIZADO
+		// const novoEstadoConteudo = { ...conteudo };
+		// delete novoEstadoConteudo?.[ano]?.[mesOld];
+		// setConteudo(novoEstadoConteudo);
+		// //FUNCIONA BEM REMOVENDO O ULTIMO ATUALIZADO
+
+		const response = await fetch(`${Gfetch}/upload`, {
+			method: 'POST',
+			body: formData,
+		});
+
+		await response.json();
+
+		if (response.ok) {
+			closeDialog();
+			//CarregarMes(mesOld);
+			CarregarMes(mes);
+			setloading(false);
+		}
+
+		//console.log('Conteudo:', conteudo);
+		//console.log('BackupConteudo: ', backupConteudo);
+	};
 
 	return (
 		<>
@@ -38,90 +132,102 @@ export default function EditButton() {
 						<div className='modal-data-time-cartao'>
 							<div className='modal-date-time'>
 								<div>
-									<label htmlFor='data'>Data:</label>
+									<label htmlFor='dataComprovanteData'>Data:</label>
 									<input
-										id='data'
+										id='dataComprovanteData'
 										type='date'
-										name='data'
-										//placeholder='DD-MM-AAAA'
+										name='dataComprovanteData'
 										required
-										value={handleDadosForm.data || ''}
-										onChange={handleDados}
+										value={
+											handleDadosForm?.dataComprovanteData ||
+											handleDadosForm?.dataComprovante?.split(' ')?.[0]
+										}
+										onChange={(e) => handleDados(e)}
 									/>
 								</div>
 								<div>
-									<label htmlFor='time'>Horário:</label>
+									<label htmlFor='dataComprovanteHora'>Horário:</label>
 									<input
-										id='time'
+										id='dataComprovanteHora'
 										type='time'
-										name='time'
+										name='dataComprovanteHora'
 										step='1'
-										//placeholder='HH:MM:SS'
 										required
-										value={handleDadosForm.time || ''}
+										value={
+											handleDadosForm?.dataComprovanteHora ||
+											handleDadosForm?.dataComprovante?.split(' ')?.[1]
+										}
 										onChange={(e) => handleDados(e)}
 									/>
 								</div>
 							</div>
 							<div className='modal-cartao'>
-								<label htmlFor='cartao'>Cartão:</label>
+								<label htmlFor='cartaoComprovante'>Cartão:</label>
 								<select
-									name='cartao'
-									value={handleDadosForm.cartao}
+									id='cartaoComprovante'
+									name='cartaoComprovante'
 									onChange={(e) => handleDados(e)}
-									required>
-									<option>Bradesco</option>
-									<option>Banestes</option>
-									<option>Caixa</option>
+									value={handleDadosForm?.cartaoComprovante}
+									required
+									title='Selecione o Cartão'>
+									<option value=''>Selecione</option>
+									<option value='Bradesco'>Bradesco</option>
+									<option value='Banestes'>Banestes</option>
+									<option value='Caixa'>Caixa</option>
 								</select>
 							</div>
 						</div>
-						<label htmlFor='nome'>Responsável:</label>
+						<label htmlFor='usuarioComprovante'>Responsável:</label>
 						<input
-							id='nome'
+							id='usuarioComprovante'
 							type='text'
 							autoComplete='off'
-							name='nome'
+							name='usuarioComprovante'
 							required
-							value={handleDadosForm.nome || ''}
+							value={handleDadosForm?.usuarioComprovante}
 							onChange={(e) => handleDados(e)}
 						/>
-						<label htmlFor='motivo'>Finalidade:</label>
+						<label htmlFor='motivoComprovante'>Finalidade:</label>
 						<input
-							id='motivo'
+							id='motivoComprovante'
 							type='text'
 							autoComplete='off'
-							name='motivo'
+							name='motivoComprovante'
 							required
-							value={handleDadosForm.motivo || ''}
+							value={handleDadosForm?.motivoComprovante}
 							onChange={(e) => handleDados(e)}
 						/>
-						<label htmlFor='valor'>Valor:</label>
+						<label htmlFor='valorComprovante'>Valor:</label>
 						<input
-							id='valor'
+							id='valorComprovante'
 							type='number'
 							step='0.01'
 							autoComplete='off'
 							inputMode='decimal'
-							name='valor'
+							name='valorComprovante'
 							required
-							value={handleDadosForm.valor || ''}
+							value={handleDadosForm?.valorComprovante}
 							onChange={(e) => handleDados(e)}
 						/>
-						<label htmlFor='arquivo'>Arquivo do comprovante:</label>
+						<label htmlFor='arquivo_'>Arquivo do comprovante:</label>
 						<input
-							key='arquivoInput'
-							id='arquivo'
+							id='arquivo_'
 							type='file'
 							name='arquivo'
 							required
-							onChange={(e) => handleDados(e)}
+							//onChange={(e) => handleDados(e)}
 						/>
 						<input
 							type='hidden'
 							name='deletar'
-							defaultValue={fileNamePop(handleDadosForm.arquivoOriginal)}
-							onChange={(e) => handleDados(e)}
+							value={fileNamePop(handleDadosForm?.linkComprovante)}
+							//onChange={(e) => handleDados(e)}
+						/>
+						<input
+							type='hidden'
+							name='deletarData'
+							value={handleDadosForm?.dataComprovante}
+							//onChange={(e) => handleDados(e)}
 						/>
 						<div className='modal-functions'>
 							{loading ? (

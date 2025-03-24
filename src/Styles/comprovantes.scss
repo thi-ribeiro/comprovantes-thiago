@@ -257,25 +257,19 @@ body.tema-escuro {
                     //background-color: red; //REMOVER APOS
                 }
 
-                .comprovantes-mes-total-dia {
-                    display: flex;
-                    justify-content: flex-end;
-                    padding: 2px 5px;
-                    font-weight: bold;
-                }
-
                 .comprovantes-mes-dia-wrapper {
+                    padding: 2px 0;
                     border-top: 1px solid $bordas;
                     border-bottom: 1px solid $bordas;
 
                     .comprovantes-dia {
                         display: flex;
                         align-items: center;
-                        justify-content: space-between;
+                        //justify-content: space-between;
                         //border: 1px solid $bordas;
-                        border-left: 0;
-                        border-right: 0;
-                        margin: 1px 0;
+                        //border-left: 0;
+                        //border-right: 0;
+                        // margin: 1px 0;
                         padding: 0 5px;
 
                         .comprovantes-dia-botoes {
@@ -306,9 +300,12 @@ body.tema-escuro {
                             display: flex;
                         }
                     }
-
-                    .comprovantes-dia-caixa {
-                    }
+                }
+                .comprovantes-mes-dia-total {
+                    display: flex;
+                    justify-content: flex-end;
+                    padding: 2px 5px;
+                    font-weight: bold;
                 }
             }
 
@@ -321,6 +318,7 @@ body.tema-escuro {
                 .comprovantes-mes-total-dados {
                     display: flex;
                     justify-content: space-between;
+                    //padding: 0 5px 5px 5px;
                     padding: 5px;
 
                     .comprovantes-mes-total-completo,
@@ -607,6 +605,8 @@ input[type="file"] {
 }
 
 .relatorio {
+    width: 100vh;
+
     .relatorio-busca {
         display: flex;
         margin: 5px 0;
@@ -624,8 +624,10 @@ input[type="file"] {
 
         .dias-layout-impressao-dia {
             font-weight: bold;
-            margin: 5px;
-            font-size: medium;
+            padding: 0 5px;
+            font-size: small;
+            background-color: $backgroundsClarinho;
+            color: $laranjaPadrao;
         }
 
         table {
@@ -639,26 +641,44 @@ input[type="file"] {
                     background-color: $backgroundsClarinho;
                 }
             }
-        }
 
-        th {
-            border: 1px solid $bordas;
-            padding: 5px;
-        }
+            th {
+                border: 1px solid $bordas;
+                //border-top: none;
+                border-bottom: none;
+                padding: 5px;
+            }
 
-        tr {
-            text-align: center;
-        }
+            .th1 {
+                width: 80px;
+            }
+            .th2 {
+                width: 95px;
+            }
+            .th3 {
+                width: 200px;
+            }
+            .th4 {
+                width: 100px;
+            }
 
-        td {
-            min-width: 180px;
-            border: 1px solid $bordas;
-            padding: 0 5px;
-        }
+            tr {
+                text-align: center;
+                transition: background-color 500ms ease 0s;
+            }
 
-        .tg-01,
-        .tg-02 {
-            min-width: 80px;
+            tbody {
+                tr:hover {
+                    background-color: $backgroundsClarinho;
+                }
+            }
+
+            td {
+                //min-width: 145px;
+                white-space: nowrap;
+                border: 1px solid $bordas;
+                padding: 0 5px;
+            }
         }
     }
 }

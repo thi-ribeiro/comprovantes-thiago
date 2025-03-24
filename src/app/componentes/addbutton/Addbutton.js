@@ -1,79 +1,60 @@
 'use client';
+
+import { ComprovantesContext } from '@/app/context/Comprovantes/ComprovantesContext';
 import { Gfetch } from '@/app/Fetch/FetchGlobal';
-import { mdiClose, mdiPlus } from '@mdi/js';
-import Icon from '@mdi/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
+import { BsPlus, BsXLg } from 'react-icons/bs';
 
-export default function Addbutton({
-	conteudo,
-	isOpen,
-	onClose,
-	onEnd,
-	onEdit,
-}) {
+export default function Addbutton() {
 	const DialogRef = useRef(null);
+	//const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [handleDadosForm, sethandleDadosForm] = useState({});
-	const [isDialogOpen, setIsDialogOpen] = useState(false);
-	const [loading, setloading] = useState(false);
 
-	useEffect(() => {
-		let dialog = DialogRef.current;
-
-		if (isDialogOpen && dialog) {
-			dialog.showModal();
-		} else {
-			dialog.close();
-		}
-	}, [isOpen, onClose, isDialogOpen, handleDadosForm, onEdit]);
+	const { loading, clearForms, CarregarMes } = useContext(ComprovantesContext);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		setloading(true);
+		//console.log(handleDadosForm);
 
 		const formData = new FormData(e.currentTarget);
+		const [ano, mes, dia] = formData?.get('dataComprovanteData')?.split('-');
 
-		const date = new Date(formData.get('data'));
+		//const date = new Date(formData.get('data'));
 		const response = await fetch(`${Gfetch}/upload`, {
 			method: 'POST',
 			body: formData,
 		});
 
-		const data = await response.json();
+		await response.json();
 
 		if (response.ok) {
-			setloading(false);
-			closeDialog();
 			sethandleDadosForm({});
-			onEnd(formatMonth(date.getMonth() + 1));
+			CarregarMes(mes);
+			closeDialog();
 		}
 	};
 
-	const formatMonth = (month) => {
-		return month < 10 ? `0${month}` : `${month}`;
-	};
-
 	const handleDados = (e) => {
-		sethandleDadosForm({ ...handleDadosForm, [e.target.name]: e.target.value });
-	};
-
-	const openDialog = (e) => {
-		setIsDialogOpen(true);
-
-		//console.log(onEdit);
+		sethandleDadosForm({
+			...handleDadosForm,
+			[e.target.name]: e.target.value,
+		});
 	};
 
 	const closeDialog = () => {
-		setIsDialogOpen(false);
-		sethandleDadosForm({});
-		//clearEdit(); //LIMPA USANDO STATE DO PAI
+		DialogRef.current?.close();
+	};
+
+	const openDialog = () => {
+		DialogRef.current?.showModal();
 	};
 
 	return (
 		<>
 			<dialog className='modal' ref={DialogRef} onClose={closeDialog}>
 				<div className='modal-close'>
-					<Icon path={mdiClose} size={1} onClick={closeDialog} />
+					<BsXLg onClick={closeDialog} />
 				</div>
 				<h1>Adicionar Comprovante</h1>
 				<form onSubmit={(e) => handleSubmit(e)}>
@@ -81,77 +62,67 @@ export default function Addbutton({
 						<div className='modal-data-time-cartao'>
 							<div className='modal-date-time'>
 								<div>
-									<label htmlFor='data'>Data:</label>
+									<label htmlFor='dataComprovanteData'>Data:</label>
 									<input
-										id='data'
+										id='dataComprovanteData'
 										type='date'
-										name='data'
-										//placeholder='DD-MM-AAAA'
-
-										value={handleDadosForm.data || ''}
+										name='dataComprovanteData'
+										value={handleDadosForm.dataComprovanteData || ''}
 										onChange={handleDados}
 									/>
 								</div>
 								<div>
-									<label htmlFor='time'>Horário:</label>
+									<label htmlFor='dataComprovanteHora'>Horário:</label>
 									<input
-										id='time'
+										id='dataComprovanteHora'
 										type='time'
-										name='time'
+										name='dataComprovanteHora'
 										step='1'
-										//placeholder='HH:MM:SS'
-
-										value={handleDadosForm.time || ''}
+										value={handleDadosForm.dataComprovanteHora || ''}
 										onChange={(e) => handleDados(e)}
 									/>
 								</div>
 							</div>
 							<div className='modal-cartao'>
-								<label htmlFor='cartao'>Cartão:</label>
-								<select name='cartao' onChange={(e) => handleDados(e)}>
+								<label htmlFor='cartaoComprovante'>Cartão:</label>
+								<select id='cartaoComprovante' name='cartaoComprovante'>
 									<option>Bradesco</option>
 									<option>Banestes</option>
 									<option>Caixa</option>
 								</select>
 							</div>
 						</div>
-						<label htmlFor='nome'>Responsável:</label>
+						<label htmlFor='usuarioComprovante'>Responsável:</label>
 						<input
-							id='nome'
+							id='usuarioComprovante'
 							type='text'
 							autoComplete='off'
-							name='nome'
-							value={handleDadosForm.nome || ''}
+							name='usuarioComprovante'
+							value={handleDadosForm.usuarioComprovante || ''}
 							onChange={(e) => handleDados(e)}
 						/>
-						<label htmlFor='motivo'>Finalidade:</label>
+						<label htmlFor='motivoComprovante'>Finalidade:</label>
 						<input
-							id='motivo'
+							id='motivoComprovante'
 							type='text'
 							autoComplete='off'
-							name='motivo'
-							value={handleDadosForm.motivo || ''}
+							name='motivoComprovante'
+							value={handleDadosForm.motivoComprovante || ''}
 							onChange={(e) => handleDados(e)}
 						/>
-						<label htmlFor='valor'>Valor:</label>
+						<label htmlFor='valorComprovante'>Valor:</label>
 						<input
-							id='valor'
+							id='valorComprovante'
 							type='number'
 							step='0.01'
 							autoComplete='off'
 							inputMode='decimal'
-							name='valor'
-							value={handleDadosForm.valor || ''}
+							name='valorComprovante'
+							value={handleDadosForm.valorComprovante || ''}
 							onChange={(e) => handleDados(e)}
 						/>
 						<label htmlFor='arquivo'>Arquivo do comprovante:</label>
-						<input
-							id='arquivo'
-							type='file'
-							name='arquivo'
-							value={handleDadosForm.arquivo || ''}
-							onChange={(e) => handleDados(e)}
-						/>
+						<input id='arquivo' type='file' name='arquivo' />
 						<div className='modal-functions'>
 							{loading ? (
 								<div className='modal-funcions-load'>
@@ -167,8 +138,8 @@ export default function Addbutton({
 					</div>
 				</form>
 			</dialog>
-			<div className='modal-button' onClick={() => openDialog()}>
-				<Icon path={mdiPlus} size={1.6} />
+			<div className='modal-button' onClick={openDialog}>
+				<BsPlus size={25} />
 			</div>
 		</>
 	);

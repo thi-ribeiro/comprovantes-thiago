@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useMemo, useRef, useState } from 'react';
 import _ from 'lodash';
 
 import { Gfetch } from './Fetch/FetchGlobal';
@@ -41,7 +41,6 @@ function Conteudo() {
 	);
 
 	const {
-		CarregarMes,
 		conteudo,
 		definirAno,
 		BotaoOpen,
@@ -94,16 +93,18 @@ function Conteudo() {
 						Nenhum comprovante.
 					</div>
 				);
-			} else {
-				return (
-					<div className='comprovantes-grupo' ref={refMudar}>
-						<Busca ano={ano} mes={Mes} />
-						{!Object?.keys(Conteudo?.dias).length ? (
-							<div className='comprovantes-grupo-vazio'>
-								Nenhum resultado para busca.
-							</div>
-						) : null}
-						{Object?.keys(Conteudo?.dias)?.map((dia, index) => {
+			}
+			return (
+				<div className='comprovantes-grupo' ref={refMudar}>
+					<Busca ano={ano} mes={Mes} />
+					{!Object?.keys(Conteudo?.dias).length ? (
+						<div className='comprovantes-grupo-vazio'>
+							Nenhum resultado para busca.
+						</div>
+					) : null}
+					{Object?.keys(Conteudo?.dias)
+						.sort() //FIX SORT TESTANDO
+						?.map((dia, index) => {
 							let valorTotalDia = 0;
 
 							return (
@@ -124,9 +125,9 @@ function Conteudo() {
 												valorTotalDia =
 													parseFloat(valorTotalDia) +
 													parseFloat(valorComprovante || 0);
-												valorFinalMes =
-													parseFloat(valorFinalMes) +
-													parseFloat(valorComprovante);
+												// valorFinalMes =
+												// 	parseFloat(valorFinalMes) +
+												// 	parseFloat(valorComprovante);
 												return (
 													<div key={idComprovante} className='comprovantes-dia'>
 														<div className='comprovantes-dia-botoes'>
@@ -144,7 +145,7 @@ function Conteudo() {
 														<div
 															className='comprovantes-dia-motivo'
 															onClick={() =>
-																editarPostComprovante(idComprovante)
+																editarPostComprovante(idComprovante, Mes)
 															}>
 															<span>{motivoComprovante}</span>
 														</div>
@@ -159,7 +160,7 @@ function Conteudo() {
 										)}
 									</div>
 
-									<div className='comprovantes-mes-total-dia'>
+									<div className='comprovantes-mes-dia-total'>
 										<span className='span-color'>
 											{converterParaReal(valorTotalDia)}
 										</span>
@@ -167,10 +168,9 @@ function Conteudo() {
 								</div>
 							);
 						})}
-						<TotalCartoes mes={Mes} ano={ano} />
-					</div>
-				);
-			}
+					<TotalCartoes mes={Mes} ano={ano} />
+				</div>
+			);
 		}
 	};
 
@@ -214,7 +214,7 @@ function Conteudo() {
 			</div>
 
 			<EditButton />
-			<Addbutton onEnd={(mes) => CarregarMes(mes)} />
+			<Addbutton />
 		</>
 	);
 }
